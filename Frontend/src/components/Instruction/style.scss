@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Foldit:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Foldit:wght@700;800&family=Lemon&display=swap');
+
+.container{
+    &.instruction{
+        
+        font-family: 'Foldit', sans-serif;
+        font-family: 'Lemon', serif;
+        display: flex;
+        flex-direction: column;
+
+        opacity: 0; /* Ẩn phần tử khi chưa xuất hiện */
+        animation: fadeInDown 2s ease-out forwards; /* Áp dụng animation trong 1 giây */
+        .box-instruction{
+
+            margin-top: 60px;
+            color: white;
+            border-radius: 25px;
+            padding: 30px 50px;
+            background: #efeded24;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-top: 1.5px solid white;     
+            border-bottom: 1.5px solid white;
+            
+
+            .box-contain{
+                display: flex;
+
+                .box-left{
+                    .nim-history{
+                        text-align: left;
+                        h4{
+                            font-size: 1.2rem;
+                        }
+
+                        p{
+                            font-size: 0.8rem;
+                        }
+                    }
+        
+                    .how-to-play{
+                        text-align: left;
+                        margin-top: 20px;
+                        h4{
+                            font-size: 1.2rem;
+                        }
+                        p{
+                            font-size: 0.8rem;
+                        }
+                    }
+                }
+    
+    
+                .box-right{
+                    width: 450px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    
+                    span{
+                        display: inline-block;
+                        
+                        width: 20px; 
+                        height: 20px; 
+                        margin: 10px 8px;  
+                        border-radius: 50%;
+                        background-color: white; 
+                        box-shadow: 0px 0px 15px white;
+    
+                    }
+                 
+                }
+            }
+
+            .version{
+                text-align: left;
+                margin: 5px 0;
+                font-size: 0.8rem;
+                
+                .strong{
+                    
+                }
+            }
+        }
+
+        .btn-play{
+            margin-top: 30px;
+            a{
+                text-decoration: none;
+                padding: 8px;
+                color: white;
+                background: #efeded64;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                border-top: 1.5px solid white;     
+                border-bottom: 1.5px solid white;
+                border-radius: 10px;
+
+                &:hover{
+                background: #efeded26;
+                }
+            }
+        }
+        
+    }
+}
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px); /* Di chuyển lên trên 50px */
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0); /* Hiển thị ở vị trí ban đầu */
+      }
+}

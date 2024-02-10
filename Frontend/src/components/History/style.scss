@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Foldit:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Foldit:wght@700;800&family=Lemon&display=swap');
+
+ul{
+    margin: 0;
+}
+li{
+    list-style: none;
+    margin: 0;
+}
+p{
+    margin: 0;
+}
+
+.history-title{
+    font-family: 'Foldit', sans-serif;
+    font-family: 'Lemon', serif;
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    z-index: 5;
+    background: #efeded1e;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+.container{
+    &.history{
+        opacity: 0; /* Ẩn phần tử khi chưa xuất hiện */
+        animation: fadeInDown 2s ease-out forwards; /* Áp dụng animation trong 1 giây */
+        font-family: 'Foldit', sans-serif;
+        font-family: 'Lemon', serif;
+        font-size: 1rem;
+        height: 100%;
+
+        .my-custom-scrollbar {
+            position: relative;
+            top: 80px;
+            height: 650px;
+            overflow: auto;
+
+            a{
+                text-decoration: none;
+                padding: 5px 8px;
+                color: white;
+                background: #efeded64;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                border-top: 1.5px solid white;     
+                border-bottom: 1.5px solid white;
+                border-radius: 10px;
+
+                &:hover{
+                background: #efeded26;
+                }
+            }
+        }
+        .table-wrapper-scroll-y {
+            display: block;
+        }
+        
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px); /* Di chuyển lên trên 50px */
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0); /* Hiển thị ở vị trí ban đầu */
+      }
+}

@@ -1,0 +1,67 @@
+@import '@sweetalert2/themes/dark/dark.scss';
+
+*{
+    box-sizing: border-box;
+}
+.board{
+
+    .board-element{
+        height: 573px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        .board-row{
+            display: flex;
+            justify-content: center;
+            
+            .board-cell{
+                display: inline-block;
+                width: 30px; 
+                height: 30px; 
+                margin: 10px 8px;  
+                border-radius: 50%;
+                background-color: white; 
+                box-shadow: 0px 0px 15px white;
+    
+                transition: transform 0.3s ease-in-out; 
+                
+                &:hover{
+                    transform: scale(1.1);  
+                    cursor: pointer;
+    
+                }
+            }
+        }       
+        
+    }
+    
+}
+
+.btn-control{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    .control{
+        border: none;
+        color: white;
+        border-radius: 15px;
+        padding: 5px 10px;
+        background: #efeded24;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-top: 1.5px solid white;     
+        border-bottom: 1.5px solid white;
+
+        transition: transform 0.2s ease-in-out; 
+                
+        &:hover{
+            transform: scale(1.1); 
+
+        }
+
+    }
+
+}

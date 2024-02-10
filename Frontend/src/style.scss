@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,400;1,500;1,600&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+main {
+  background: -webkit-linear-gradient(0deg, hsla(148, 89%, 78%, 1) 0%, hsla(152, 65%, 72%, 1) 0%, hsla(164, 37%, 57%, 1) 17%, hsla(178, 31%, 45%, 1) 38%, hsla(194, 45%, 34%, 1) 68%, hsla(203, 59%, 28%, 1) 88%, hsla(210, 81%, 22%, 1) 100%) !important;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.v-hidden {
+  visibility: hidden !important;
+}
+
+a{
+    text-decoration: none;
+}
+.btn-controllers {
+  background-color: #ffffff2a;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  transition: all .5s;
+  margin: 1rem;
+  margin-bottom: 0;
+}

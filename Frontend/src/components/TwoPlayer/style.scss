@@ -1,0 +1,151 @@
+
+.container{
+    width: 100%;
+    height: 100%;
+
+    &.twoPlayer{
+        display: flex;
+        flex-direction: column;
+        //menu ------------------
+        .twoPlayer-menu{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            width: 100%;
+            font-size: 1rem;
+
+            .one{
+                margin: 0;
+                .btn-back{
+                    margin: 0;  
+                    width: 50px;                     
+                    border-radius: 25px;
+                    border-bottom: 2px solid white;
+                    background: none;
+                    text-decoration: none;
+                    padding: 5px;
+                    color: white;
+                    font-size: 0.9rem;
+
+                    &:hover{
+                        background-color: white;
+                        color: black;
+                        cursor: pointer;
+                        
+                    }   
+                }
+            }
+            
+
+            .dropdown {
+                position: relative;
+                display: inline-block;
+    
+                .dropbtn {
+                    color: white;
+                    background: none;
+                    border: none;
+                    border-radius: 5px;
+                    border-bottom: 2px solid white;
+                    cursor: pointer;
+                  }
+    
+                  .dropdown-content {
+                    display: none;
+                    font-size: 0.9rem;
+                    position: absolute;
+                    background: #efeded24;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    border-bottom: 1px solid white;
+                    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+                    backdrop-filter: blur(5px);
+                    -webkit-backdrop-filter: blur(5px);
+                    min-width: 120px;
+                    z-index: 1;
+    
+    
+                    a {
+                        color: white;
+                        padding: 8px 0px;
+                        text-decoration: none;
+                        display: block;
+    
+    
+                        &:hover{
+                            background-color: #f1f1f1;
+                            color: black;
+                        }
+                      }
+                  }
+    
+                &:hover{
+                    .dropbtn {
+                        background-color: #2d2d2d;
+                      }
+                    .dropdown-content {
+                        display: block;
+                      }
+                }
+              }
+        }
+          
+          
+        // ---
+
+        .row{
+            width: 100%;
+            height: auto;
+            display: flex;
+            align-items: center;
+            &.two{
+                flex:1;
+            }
+            
+            .user{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                img{
+                    width: 150px;
+                    height: 150px;
+                    background-size: contain;
+                }
+    
+                .info-user{
+                    // background-color: white;
+                    // border-radius: 25px;
+                    border-bottom: 2px solid white;
+                    border-radius: 15px;
+                    font-size: 0.9rem;
+                    padding: 5px 10px;
+                    margin-top: 10px;
+                    color: white;
+    
+                    &.active{
+                        background:linear-gradient(90deg, rgb(55, 38, 187) 0%, rgb(60, 150, 206) 30%, rgb(51, 234, 197) 100%);
+                        // color: white;
+                    }
+                }
+    
+            }
+
+            // .row.one {
+            //     height: 20px; /* Adjust the height as needed */
+            // }
+    
+            // .row.two {
+            //     height: 60px; /* Adjust the height as needed */
+            // }
+    
+            // .row.three {
+            //     height: 30px; /* Adjust the height as needed */
+            // }
+            
+        }
+    }
+
+    
+}
