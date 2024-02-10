@@ -25,5 +25,9 @@ app.listen(port, () => {
     console.log(`App listening on port ${port}`);
 })
 
+app.get("/", (req, res) => {
+    res.send("Express on Vercel");
+  });
+
 module.exports = app;
 
