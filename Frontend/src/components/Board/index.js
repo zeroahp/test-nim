@@ -373,23 +373,10 @@ function Board() {
     }
     
     const handleChangeTurn = async () => {  
-        if(
-            (gameMode === "Two Player" && currentRow !== null) ||
-            (gameMode === "Play with Bot" && currentPlayer === player1 && currentRow !== null)
-        ){
+
             setcurrentRow(null);
             setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
-        }else{
-            Swal.fire({
-                title: `You must remove at least 1 stone`,
-                width: 600,
-                padding: "3em",
-                color: "#716add",
-                background: "#fff",
-                showConfirmButton: false,
-                timer: 1500
-              });
-        }
+
     };
 
     const BotChangeTurn = async() => {
