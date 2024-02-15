@@ -7,7 +7,7 @@ const commonConfig = {
   },
 };
 
-const axiosInstance = (baseURL='https://test-nim-server-zeroahp.vercel.app/') => {
+const axiosInstance = (baseURL='/') => {
   return axios.create({  
     baseURL,
     ...commonConfig,

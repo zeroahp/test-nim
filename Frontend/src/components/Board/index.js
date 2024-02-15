@@ -28,12 +28,17 @@ function Board() {
     const [currentPlayer, setcurrentPlayer] = useState(randomPlayer);
     const [currentRow, setcurrentRow] = useState(null);
     const [solveBoard, setSolveBoard] = useState([]); 
-    const [stonesRemoved, setStonesRemoved] = useState(0); 
+    
+    const stones = currentBoard;
+    const sum = stones.reduce((total, current) => total + current, 0);
+    const [stonesRemoved, setStonesRemoved] = useState(sum);
 
-    console.log("version", version);
     //random-playger
     useEffect(() => {
-        setcurrentPlayer(randomPlayer);
+        if(randomPlayer ){
+            dispatch(setCurrentPlayer(randomPlayer));
+            setcurrentPlayer(randomPlayer);
+        }
         // Swal.fire({
         //     title: `It starts with "${randomPlayer}" turn to play! `,
         //     width: 600,
@@ -43,16 +48,15 @@ function Board() {
         //   });
     }, []);
 
-    //setCurrentPlayer-begin
-    useEffect(() => {
-        if(randomPlayer ){
-            dispatch(setCurrentPlayer(randomPlayer));
-        }
-    }, []);
-
     //setCurrentPlayer-turn
     useEffect(() => {
         dispatch(setCurrentPlayer(currentPlayer));
+        
+        if (currentPlayer === player2 && player2 === 'Bot') {
+            setTimeout(() => {
+                handleBotRemove();   
+            }, 3000);
+        }
     }, [currentPlayer])
         
 
@@ -65,18 +69,18 @@ function Board() {
                     {
                         let newBoard = [...currentBoard];
                         await setcurrentRow(rowIndex);
-                        
+
                         if (currentRow === null) {
                             // Nếu chưa có hàng nào được ghim, ghim hàng đang xử lý
                             newBoard[rowIndex] -= 1;
                             await dispatch(setCurrentBoard(newBoard));
-
-    
+                            
                             if (newBoard[rowIndex] === 0) {
                                 // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
                                 handleChangeTurn();
                             }
                         }
+                        
                         
                         if ((rowIndex === currentRow)) {
                             // Chỉ xử lý nếu đang ở hàng đã được ghim
@@ -89,12 +93,102 @@ function Board() {
                                 handleChangeTurn();
                             }
                         }
-                        
     
                         //Nếu tất cả các giá trị trong mảng đều bằng 0
                         if (newBoard.every(value => value === 0)) {
 
                             let winner = '';
+                            if(version === "Normal Game"){
+                                winner = currentPlayer;
+                            }else{
+                                winner = (currentPlayer === player1 ? player2 : player1) 
+                            }
+
+                            await gameService.postData({
+                                player1: player1,
+                                player2: player2,
+                                currentBoard: initialBoard,
+                                solveBoard: solveBoard,
+                                turn: randomPlayer,
+                                gameMode: gameMode,
+                                winner: winner,
+                            })
+
+
+                            Swal.fire({
+                                title: `Congratulation "${winner}"!`,
+                                imageUrl: require("../../asset/gif/4b8.gif"),
+                                imageWidth: 350,
+                                imageHeight: 250,
+                                imageAlt: "Custom image",
+                                width: 400,
+                                showCancelButton: true,
+                                confirmButtonColor: "#413565",
+                                cancelButtonColor: "#000",
+                                confirmButtonText: "Back Home",
+                                cancelButtonText: "Result"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                  navigate("/home")
+                                }else{
+                                    navigate("/history")
+                                }
+                              });
+    
+                            await dispatch(setWinner(currentPlayer));
+                              console.log("chay", solveBoard);
+                            //post-data
+                            
+    
+                        }
+                }
+            }
+        }
+        else if(gameMode === "Play with Bot"){
+            if(currentPlayer=== player1){
+                if(rowIndex >= 0 && rowIndex < currentBoard.length 
+                    && colIndex >= 0 && colIndex < currentBoard[rowIndex] )
+                    {
+                        let newBoard = [...currentBoard];
+                        let cntRemove = 0;
+                        await setcurrentRow(rowIndex);
+                        
+                        if (currentRow === null) {
+                            // Nếu chưa có hàng nào được ghim, ghim hàng đang xử lý
+                            newBoard[rowIndex] -= 1;
+                            cntRemove++;
+                            await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
+
+                            if (newBoard[rowIndex] === 0) {
+                                newBoard.splice(rowIndex,1);
+                                // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
+                                handleChangeTurn();
+                            }
+                            await dispatch(setCurrentBoard(newBoard));
+
+                        }
+                        
+                        if (rowIndex === currentRow) {
+                            // Chỉ xử lý nếu đang ở hàng đã được ghim
+                            newBoard[rowIndex] -= 1;            
+                            cntRemove++;
+                            await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
+
+                            if (newBoard[rowIndex] === 0) {
+                                // remove phan tu  = 0
+                                newBoard.splice(rowIndex,1);
+                                // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
+                                handleChangeTurn();
+                            }
+                            await dispatch(setCurrentBoard(newBoard));
+
+                        }
+  
+                        // Nếu tất cả các giá trị trong mảng đều bằng 0
+                        if (newBoard.every(value => value === 0)) {
+                            
+                            let winner = '';
+                            
                             if(version === "Normal Game"){
                                 winner = currentPlayer;
                             }else{
@@ -119,14 +213,13 @@ function Board() {
                                 }else{
                                     navigate("/history")
                                 }
-                              });
+                              });                            
     
-                            await dispatch(setWinner(currentPlayer));
-                            console.log("winner", currentPlayer);
+                            await dispatch(setWinner(winner));
+                            console.log("winner", winner);
                             // await setwinner(currentPlayer);
     
                             //post-data
-                           
                             await gameService.postData({
                                 player1: player1,
                                 player2: player2,
@@ -134,84 +227,6 @@ function Board() {
                                 turn: randomPlayer,
                                 gameMode: gameMode,
                                 winner: winner,
-                            })
-    
-                        }
-                }
-            }
-        }
-        else if(gameMode === "Play with Bot"){
-            if(currentPlayer=== player1){
-
-                if(rowIndex >= 0 && rowIndex < currentBoard.length 
-                    && colIndex >= 0 && colIndex < currentBoard[rowIndex] )
-                    {
-                        let newBoard = [...currentBoard];
-                        let cntRemove = 0;
-                        await setcurrentRow(rowIndex);
-                        
-                        if (currentRow === null) {
-                            // Nếu chưa có hàng nào được ghim, ghim hàng đang xử lý
-                            newBoard[rowIndex] -= 1;
-                            await dispatch(setCurrentBoard(newBoard));
-
-    
-                            if (newBoard[rowIndex] === 0) {
-                                // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
-                                handleChangeTurn();
-                            }
-                        }
-                        
-                        if (rowIndex === currentRow) {
-                            // Chỉ xử lý nếu đang ở hàng đã được ghim
-                            newBoard[rowIndex] -= 1;            
-                            cntRemove++;
-                            await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
-
-                            if (newBoard[rowIndex] === 0) {
-                                // remove phan tu  = 0
-                                newBoard.splice(rowIndex,1);
-                                // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
-                                handleChangeTurn();
-                            }
-                            await dispatch(setCurrentBoard(newBoard));
-
-                        }
-  
-                        // Nếu tất cả các giá trị trong mảng đều bằng 0
-                        if (newBoard.every(value => value === 0)) {
-                            Swal.fire({
-                                title: `Congratulation "${currentPlayer}"!`,
-                                imageUrl: require("../../asset/gif/4b8.gif"),
-                                imageWidth: 350,
-                                imageHeight: 250,
-                                imageAlt: "Custom image",
-                                width: 400,
-                                showCancelButton: true,
-                                confirmButtonColor: "#413565",
-                                cancelButtonColor: "#000",
-                                confirmButtonText: "Back Home",
-                                cancelButtonText: "Result"
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                  navigate("/home")
-                                }else{
-                                    navigate("/history")
-                                }
-                              });                            
-    
-                            await dispatch(setWinner(currentPlayer));
-                            console.log("winner", currentPlayer);
-                            // await setwinner(currentPlayer);
-    
-                            //post-data
-                            await gameService.postData({
-                                player1: player1,
-                                player2: player2,
-                                currentBoard: initialBoard,
-                                turn: randomPlayer,
-                                gameMode: gameMode,
-                                winner: currentPlayer,
                                 solvedBoard: solveBoard,
                             })
     
@@ -221,127 +236,259 @@ function Board() {
         }   
     }
     
-    console.log("solveBoard", solveBoard);
 
     const handleBotRemove = async() => {
         calculateBotRemove();   
     }
-    useEffect(() => {
-        if (currentPlayer === player2 && player2 === 'Bot') {
-            setTimeout(() => {
-                handleBotRemove();   
-            }, 3000);
-        }
-    }, [currentPlayer]);
 
-    
+    console.log("currentBoard", currentBoard);
     const calculateBotRemove = async() => {        
-        const nimSum = calculateNimSum(currentBoard, currentBoard.length);
+        let nimSum = calculateNimSum(currentBoard, currentBoard.length);
         
-        if(nimSum !== 0){
-            for(let rowIndex = 0; rowIndex < currentBoard.length; rowIndex++){
-                const currentStones = currentBoard[rowIndex];
-                const stonesRemoved = currentBoard[rowIndex] ^ nimSum;
-              
-                if(stonesRemoved < currentBoard[rowIndex]){
-                    let newBoard = [...currentBoard];
-
-                    if(stonesRemoved === 0){
-                        newBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];
+        if(version === "Normal Game"){
+            if(nimSum !== 0){
+                for(let rowIndex = 0; rowIndex < currentBoard.length; rowIndex++){
+                    const currentStones = currentBoard[rowIndex];
+                    const stonesRemoved = currentBoard[rowIndex] ^ nimSum;
+                  
+                    if(stonesRemoved < currentBoard[rowIndex]){
+                        let newBoard = [...currentBoard];
+    
+                        if(stonesRemoved === 0){
+                            newBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];  
+                            Swal.fire({
+                                position: "top-end",
+                                title: `Bot removed "${currentBoard[rowIndex]}" piles "${[rowIndex]}"!`,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });       
+                        }else{
+                            newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
+                            Swal.fire({
+                                position: "top-end",
+                                title: `Bot removed "${stonesRemoved}" piles "${[rowIndex]}"!`,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+    
                         setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
                             playerTurn : currentPlayer,
                             stonesRemoved: currentStones,
                          }]);
-
-                        Swal.fire({
-                            position: "top-end",
-                            title: `Bot removed "${currentBoard[rowIndex]} piles"!`,
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    }else{
-                        newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
-                        setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-                            playerTurn : currentPlayer,
-                            stonesRemoved: stonesRemoved,
-                         }]);
-
-                        Swal.fire({
-                            position: "top-end",
-                            title: `Bot removed "${stonesRemoved} piles"!`,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-
-            
-                    if (newBoard[rowIndex] === 0) {
-                        // handleChangeTurn();
-                        newBoard.splice(rowIndex,1);
-                    }
-                    await dispatch(setCurrentBoard(newBoard));
-                    
-
-                    if(nimSum === currentBoard[rowIndex] && currentBoard.length === 1 ){
-                        let emptyBoard = [...currentBoard];
-                        emptyBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];
-                        await dispatch(setCurrentBoard(emptyBoard));
-
-                        if (emptyBoard.every(value => value === 0)) {
-                            Swal.fire({
-                                title: `Congratulation "${currentPlayer}"!`,
-                                imageUrl: require("../../asset/gif/4b8.gif"),
-                                imageWidth: 350,
-                                imageHeight: 250,
-                                imageAlt: "Custom image",
-                                width: 400,
-                                showCancelButton: true,
-                                confirmButtonColor: "#413565",
-                                cancelButtonColor: "#000",
-                                confirmButtonText: "Back Home",
-                                cancelButtonText: "Result"
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                  navigate("/home")
-                                }else{
-                                    navigate("/history")
-                                }
-                              });
-
-                        }
-
-                        await dispatch(setWinner(currentPlayer));
-                            console.log("winner", currentPlayer);
-                            // await setwinner(currentPlayer);
-    
-                            //post-data
-                            await gameService.postData({
-                                player1: player1,
-                                player2: player2,
-                                currentBoard: initialBoard,
-                                turn: randomPlayer,
-                                gameMode: gameMode,
-                                winner: currentPlayer,
-                                solvedBoard: solveBoard,
-
-                            })   
-    
-                    }
-                    break;
-                }
                 
+                        if (newBoard[rowIndex] === 0) {
+                            // handleChangeTurn();
+                            newBoard.splice(rowIndex,1);
+                        }
+                        await dispatch(setCurrentBoard(newBoard));
+                        
+    
+                        if(nimSum === currentBoard[rowIndex] && currentBoard.length === 1 ){
+                            let emptyBoard = [...currentBoard];
+                            emptyBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];
+                            await dispatch(setCurrentBoard(emptyBoard));
+    
+                            if (emptyBoard.every(value => value === 0)) {
+    
+                                let winner = '';
+                                
+                                if(version === "Normal Game"){
+                                    winner = currentPlayer;
+                                }else{
+                                    winner = (currentPlayer === player1 ? player2 : player1) 
+                                }
+    
+                                Swal.fire({
+                                    title: `Congratulation "${currentPlayer}"!`,
+                                    imageUrl: require("../../asset/gif/4b8.gif"),
+                                    imageWidth: 350,
+                                    imageHeight: 250,
+                                    imageAlt: "Custom image",
+                                    width: 400,
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#413565",
+                                    cancelButtonColor: "#000",
+                                    confirmButtonText: "Back Home",
+                                    cancelButtonText: "Result"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                      navigate("/home")
+                                    }else{
+                                        navigate("/history")
+                                    }
+                                  });
+    
+                                await dispatch(setWinner(winner));
+        
+                                //post-data
+                                await gameService.postData({
+                                    player1: player1,
+                                    player2: player2,
+                                    currentBoard: initialBoard,
+                                    turn: randomPlayer,
+                                    gameMode: gameMode,
+                                    winner: winner,
+                                    solvedBoard: solveBoard,
+                                })   
+                            }   
+                        }
+                        break;
+                    }   
+                }
+                BotChangeTurn(); 
             }
-            BotChangeTurn();
+            else
+            {
+                getRandomRemove();
+                BotChangeTurn();
+            }   
+        } else if(version === "Misère game"){
+            let tmp = [...currentBoard];
+            let i, i1 = 0, index = 0;
+            for(i = 0 ; i < tmp.length ; i++){
+                if(tmp[i] === 1){
+                    i1++;
+                    console.log("i1", i1);
+                }else if(tmp[i] > 1){
+                    index = i;
+                }
+            }
+            console.log("index", index);
+
+            if(i1 === (currentBoard.length - 1)){
+                console.log("chay-------");
+                console.log("tmp.length", tmp.length);
+                if(tmp.length % 2){
+                    tmp[index] =  tmp[index] - ( tmp[index] - 1);
+                }else{
+                    tmp[index] =  tmp[index] -  tmp[index];
+                }
+
+                console.log("tmp", tmp[index]);
+                if (tmp[index] === 0) {
+                    console.log("tmp === 0");
+                    tmp.splice(index,1);
+                }
+                await dispatch(setCurrentBoard(tmp));
+                Swal.fire({
+                    position: "top-end",
+                    title: `Bot removed "${currentBoard[index]}" piles "${[index]}"!`,
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                BotChangeTurn(); 
+            }
+            else{
+                if(nimSum !== 0){
+                    console.log("nim-sum != 0");
+                    console.log("nim-sum", nimSum);
+                    for(let rowIndex = 0; rowIndex < currentBoard.length; rowIndex++){
+                        const currentStones = currentBoard[rowIndex];
+                        const stonesRemoved = currentBoard[rowIndex] ^ nimSum;
+                    console.log("stonesRemoved", stonesRemoved);
+                    console.log(" currentBoard[rowIndex]",  currentBoard[rowIndex]);
+                      
+                        if(stonesRemoved < currentBoard[rowIndex]){
+                            let newBoard = [...currentBoard];
+        
+                            if(stonesRemoved === 0){
+                                newBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];  
+                                Swal.fire({
+                                    position: "top-end",
+                                    title: `Bot removed "${currentBoard[rowIndex]}" piles "${[rowIndex]}"!`,
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });       
+                            }else{
+                                newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
+                                Swal.fire({
+                                    position: "top-end",
+                                    title: `Bot removed "${stonesRemoved}" piles "${[rowIndex]}"!`,
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            }
+                    
+                            if (newBoard[rowIndex] === 0) {
+                                newBoard.splice(rowIndex,1);
+                            }
+
+                            setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
+                                playerTurn : currentPlayer,
+                                stonesRemoved: currentStones,
+                             }]);
+        
+                           
+                            await dispatch(setCurrentBoard(newBoard));
+                            
+        
+                            if(nimSum === currentBoard[rowIndex] && currentBoard.length === 1 ){
+                                let emptyBoard = [...currentBoard];
+                                emptyBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];
+                                await dispatch(setCurrentBoard(emptyBoard));
+        
+                                if (emptyBoard.every(value => value === 0)) {
+        
+                                    let winner = '';
+                                    
+                                    if(version === "Normal Game"){
+                                        winner = currentPlayer;
+                                    }else{
+                                        winner = (currentPlayer === player1 ? player2 : player1) 
+                                    }
+        
+                                    Swal.fire({
+                                        title: `Congratulation "${winner}"!`,
+                                        imageUrl: require("../../asset/gif/4b8.gif"),
+                                        imageWidth: 350,
+                                        imageHeight: 250,
+                                        imageAlt: "Custom image",
+                                        width: 400,
+                                        showCancelButton: true,
+                                        confirmButtonColor: "#413565",
+                                        cancelButtonColor: "#000",
+                                        confirmButtonText: "Back Home",
+                                        cancelButtonText: "Result"
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                          navigate("/home")
+                                        }else{
+                                            navigate("/history")
+                                        }
+                                      });
+        
+                                    await dispatch(setWinner(winner));
             
-        }
-        else
-        {
-            getRandomRemove();
-            BotChangeTurn();
-        }   
+                                    //post-data
+                                    await gameService.postData({
+                                        player1: player1,
+                                        player2: player2,
+                                        currentBoard: initialBoard,
+                                        turn: randomPlayer,
+                                        gameMode: gameMode,
+                                        winner: winner,
+                                        solvedBoard: solveBoard,
+                                    })   
+                                }   
+                            }
+                            break;
+                        }   
+                    }
+                    BotChangeTurn(); 
+                }
+                else
+                {
+                    getRandomRemove();
+                    BotChangeTurn();
+                } 
+                }
+            }
+    
+        
+        
     }
 
-    console.log("solveBoard", solveBoard);
 
     const getRandomRemove = async() => {
         const rowIndex = Math.floor(Math.random() * currentBoard.length);
@@ -353,7 +500,7 @@ function Board() {
         // setcurrentRow(rowIndex);
         Swal.fire({
             position: "top-end",
-            title: `Bot removed "${stonesRemoved} piles"!`,
+            title: `Bot removed "${stonesRemoved} piles ${rowIndex}"!`,
             showConfirmButton: false,
             timer: 3000
         });
@@ -373,27 +520,26 @@ function Board() {
     }
     
     const handleChangeTurn = async () => {  
+        let sum = currentBoard.reduce((total, current) => total + current, 0);
+        let newMove = { player: currentPlayer, stonesRemoved: (stonesRemoved - sum ), rowIndex: currentRow };
+        setSolveBoard([...solveBoard, newMove]);
 
-            setcurrentRow(null);
-            setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
+        await setcurrentRow(null);
+        await setStonesRemoved(sum);
+        setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
 
     };
+    console.log("SolveBoard", solveBoard);
 
     const BotChangeTurn = async() => {
         setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
     }
-
-
 
     const handleChangeBoard = async() => {
         const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4),10);
         await dispatch(setCurrentBoard(randomBoard));
         await dispatch(setInitial(randomBoard));
     }
-
-    
-    console.log("initialBoard",initialBoard );
-    console.log("currentBoard",currentBoard );
 
     
     return (

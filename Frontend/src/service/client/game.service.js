@@ -1,7 +1,7 @@
 import createApiClient from "../api.service";
 
 class GameServiceClient {
-    constructor(baseUrl = "/api"){
+    constructor(baseUrl = "http://localhost:3001/api"){
         this.api = createApiClient(baseUrl);
     }
 
