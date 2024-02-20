@@ -26,12 +26,12 @@ function Board() {
     const initialBoard = useSelector((state) => state.NimGame.initialBoard);    
     //usestate
     const [currentPlayer, setcurrentPlayer] = useState(randomPlayer);
-    const [currentRow, setcurrentRow] = useState(null);
+    const [currentRow, setcurrentRow] = useState();
     const [solveBoard, setSolveBoard] = useState([]); 
     
-    const stones = currentBoard;
-    const sum = stones.reduce((total, current) => total + current, 0);
-    const [stonesRemoved, setStonesRemoved] = useState(sum);
+    const [stonesRemoved, setStonesRemoved] = useState([]);
+    const [botRemoved, SetBotRemoved] = useState();
+    
 
     //random-playger
     useEffect(() => {
@@ -46,6 +46,9 @@ function Board() {
         //     color: "#716add",
         //     background: "#fff",
         //   });
+        SetBotRemoved(5);
+        setcurrentRow(null);
+
     }, []);
 
     //setCurrentPlayer-turn
@@ -57,8 +60,18 @@ function Board() {
                 handleBotRemove();   
             }, 3000);
         }
+       
     }, [currentPlayer])
         
+    useEffect(() => {
+        let sum = 0;
+        for(let i = 0; i< initialBoard.length ; i++){
+            sum += initialBoard[i];
+        }
+        setStonesRemoved(sum)
+    }, [initialBoard]);
+
+    
 
     //remove-stones
     const handleRemove = async(rowIndex, colIndex) => {    
@@ -68,10 +81,11 @@ function Board() {
                     && colIndex >= 0 && colIndex < currentBoard[rowIndex] )
                     {
                         let newBoard = [...currentBoard];
-                        await setcurrentRow(rowIndex);
-
+                        let updatedRow = rowIndex; 
                         if (currentRow === null) {
                             // Nếu chưa có hàng nào được ghim, ghim hàng đang xử lý
+                            await setcurrentRow(updatedRow);
+                        
                             newBoard[rowIndex] -= 1;
                             await dispatch(setCurrentBoard(newBoard));
                             
@@ -90,6 +104,8 @@ function Board() {
             
                             if (newBoard[rowIndex] === 0) {
                                 // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
+                                // newBoard.splice(rowIndex,1);
+
                                 handleChangeTurn();
                             }
                         }
@@ -103,7 +119,8 @@ function Board() {
                             }else{
                                 winner = (currentPlayer === player1 ? player2 : player1) 
                             }
-
+                            
+                            //post-data
                             await gameService.postData({
                                 player1: player1,
                                 player2: player2,
@@ -135,10 +152,7 @@ function Board() {
                                 }
                               });
     
-                            await dispatch(setWinner(currentPlayer));
-                              console.log("chay", solveBoard);
-                            //post-data
-                            
+                            await dispatch(setWinner(currentPlayer));                         
     
                         }
                 }
@@ -156,8 +170,8 @@ function Board() {
                         if (currentRow === null) {
                             // Nếu chưa có hàng nào được ghim, ghim hàng đang xử lý
                             newBoard[rowIndex] -= 1;
-                            cntRemove++;
-                            await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
+                            // cntRemove++;
+                            // await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
 
                             if (newBoard[rowIndex] === 0) {
                                 newBoard.splice(rowIndex,1);
@@ -171,8 +185,8 @@ function Board() {
                         if (rowIndex === currentRow) {
                             // Chỉ xử lý nếu đang ở hàng đã được ghim
                             newBoard[rowIndex] -= 1;            
-                            cntRemove++;
-                            await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
+                            // cntRemove++;
+                            // await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
 
                             if (newBoard[rowIndex] === 0) {
                                 // remove phan tu  = 0
@@ -216,9 +230,7 @@ function Board() {
                               });                            
     
                             await dispatch(setWinner(winner));
-                            console.log("winner", winner);
-                            // await setwinner(currentPlayer);
-    
+
                             //post-data
                             await gameService.postData({
                                 player1: player1,
@@ -241,7 +253,6 @@ function Board() {
         calculateBotRemove();   
     }
 
-    console.log("currentBoard", currentBoard);
     const calculateBotRemove = async() => {        
         let nimSum = calculateNimSum(currentBoard, currentBoard.length);
         
@@ -346,28 +357,26 @@ function Board() {
         } else if(version === "Misère game"){
             let tmp = [...currentBoard];
             let i, i1 = 0, index = 0;
+
+            //truong hop dat biet
             for(i = 0 ; i < tmp.length ; i++){
                 if(tmp[i] === 1){
                     i1++;
-                    console.log("i1", i1);
                 }else if(tmp[i] > 1){
                     index = i;
                 }
             }
-            console.log("index", index);
 
             if(i1 === (currentBoard.length - 1)){
-                console.log("chay-------");
-                console.log("tmp.length", tmp.length);
                 if(tmp.length % 2){
                     tmp[index] =  tmp[index] - ( tmp[index] - 1);
+                    await SetBotRemoved(tmp[index] - 1)
                 }else{
                     tmp[index] =  tmp[index] -  tmp[index];
+                    await SetBotRemoved(tmp[index]);
                 }
 
-                console.log("tmp", tmp[index]);
                 if (tmp[index] === 0) {
-                    console.log("tmp === 0");
                     tmp.splice(index,1);
                 }
                 await dispatch(setCurrentBoard(tmp));
@@ -381,14 +390,9 @@ function Board() {
             }
             else{
                 if(nimSum !== 0){
-                    console.log("nim-sum != 0");
-                    console.log("nim-sum", nimSum);
                     for(let rowIndex = 0; rowIndex < currentBoard.length; rowIndex++){
-                        const currentStones = currentBoard[rowIndex];
                         const stonesRemoved = currentBoard[rowIndex] ^ nimSum;
-                    console.log("stonesRemoved", stonesRemoved);
-                    console.log(" currentBoard[rowIndex]",  currentBoard[rowIndex]);
-                      
+
                         if(stonesRemoved < currentBoard[rowIndex]){
                             let newBoard = [...currentBoard];
         
@@ -399,7 +403,15 @@ function Board() {
                                     title: `Bot removed "${currentBoard[rowIndex]}" piles "${[rowIndex]}"!`,
                                     showConfirmButton: false,
                                     timer: 3000
-                                });       
+                                }); 
+                                await SetBotRemoved(currentBoard[rowIndex]);
+                                
+                                setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
+                                    player : currentPlayer,
+                                    stonesRemoved: currentBoard[rowIndex],
+                                    rowIndex: rowIndex,
+
+                                 }]);
                             }else{
                                 newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
                                 Swal.fire({
@@ -408,21 +420,22 @@ function Board() {
                                     showConfirmButton: false,
                                     timer: 3000
                                 });
+                                await SetBotRemoved(stonesRemoved);
+
+                                setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
+                                    player : currentPlayer,
+                                    stonesRemoved: stonesRemoved,
+                                    rowIndex: rowIndex,
+
+                                 }]);
                             }
                     
                             if (newBoard[rowIndex] === 0) {
                                 newBoard.splice(rowIndex,1);
-                            }
-
-                            setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-                                playerTurn : currentPlayer,
-                                stonesRemoved: currentStones,
-                             }]);
-        
+                            }     
                            
                             await dispatch(setCurrentBoard(newBoard));
-                            
-        
+                        
                             if(nimSum === currentBoard[rowIndex] && currentBoard.length === 1 ){
                                 let emptyBoard = [...currentBoard];
                                 emptyBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];
@@ -484,9 +497,6 @@ function Board() {
                 } 
                 }
             }
-    
-        
-        
     }
 
 
@@ -504,10 +514,12 @@ function Board() {
             showConfirmButton: false,
             timer: 3000
         });
+        await SetBotRemoved(stonesRemoved);
 
         setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
             playerTurn : currentPlayer,
             stonesRemoved: stonesRemoved,
+            rowIndex: rowIndex,
          }]);
 
         if (newBoard[rowIndex] === 0) {
@@ -519,28 +531,58 @@ function Board() {
         return {rowIndex, stonesRemoved};
     }
     
-    const handleChangeTurn = async () => {  
-        let sum = currentBoard.reduce((total, current) => total + current, 0);
-        let newMove = { player: currentPlayer, stonesRemoved: (stonesRemoved - sum ), rowIndex: currentRow };
-        setSolveBoard([...solveBoard, newMove]);
+    //set-auto-changTurn
+    useEffect(() => {
 
-        await setcurrentRow(null);
-        await setStonesRemoved(sum);
-        setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
+        if((currentBoard[currentRow] - 1) === 0){
+            setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
+            setcurrentRow(null);
+        }
 
+    }, [currentRow]);
+
+    //set-changTurn
+    const handleChangeTurn = async(e) => {  
+        console.log("currentRow == ", currentRow);
+        if(currentRow !== null){
+            console.log("currentBoard in", currentBoard);
+            let sum = 0;
+            for(let i = 0; i< currentBoard.length ; i++){
+                sum += currentBoard[i];
+                console.log(currentBoard[i]);
+            }
+    
+            let newMove = { 
+                player: currentPlayer, 
+                stonesRemoved: (stonesRemoved - sum), 
+                rowIndex: currentRow 
+            };
+            setSolveBoard([...solveBoard, newMove]);
+    
+            await setcurrentRow(null);
+            setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
+        }else{
+            return;
+        }
     };
-    console.log("SolveBoard", solveBoard);
+
 
     const BotChangeTurn = async() => {
-        setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
+
+        let sum = 0;
+        for(let i = 0; i< currentBoard.length ; i++){
+            sum += currentBoard[i];
+        }
+        await setStonesRemoved(sum);
+        setcurrentPlayer(currentPlayer === player1 ? player2 : player1);     
     }
 
     const handleChangeBoard = async() => {
         const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4),10);
         await dispatch(setCurrentBoard(randomBoard));
         await dispatch(setInitial(randomBoard));
+        setSolveBoard([]);    
     }
-
     
     return (
         <>
@@ -580,11 +622,11 @@ function Board() {
                 }
             </div>
             <div className="btn-control">
-                <button className="control change-turn" onClick={handleChangeTurn}>
+                <button className="control change-turn"  title="Change turns when you have removed a stone or automatically change turns if you have removed the last stone in a row. " onClick={handleChangeTurn}>
                     Change Turn
                 </button>
 
-                <button className="control change-board" onClick={handleChangeBoard}>Change Board</button>
+                <button className="control change-board" title="The board can only be changed if no moves have been made yet." onClick={handleChangeBoard}>Change Board</button>
             </div>
         </>
     )
