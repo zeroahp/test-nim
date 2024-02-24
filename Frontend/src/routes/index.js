@@ -7,6 +7,8 @@ import Instruction from '../pages/Instruction'
 import Info from '../pages/InfoUser'  
 import GameMode from '../pages/GameMode'  
 import { Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+
 
 export const routes = [
   {
@@ -18,17 +20,18 @@ export const routes = [
         element: <Home />
       },
       {
-        path: "game-mode",
-        element: <GameMode />
-      },
-      {
         path: "info-user",
-        element: <Info />
+        element: <Info />,
       },
       {
         path: "two-player",
         element: <TwoPlayer />
       },
+      {
+        path: "game-mode",
+        element: <GameMode />
+      },
+      
       {
         path: "playvsbot",
         element: <PlayVsBot />

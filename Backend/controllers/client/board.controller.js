@@ -17,6 +17,7 @@ module.exports.nimPost = async (req, res) => {
             turn: req.body.turn,
             solvedBoard: req.body.solvedBoard,
             gameMode: req.body.gameMode,
+            version: req.body.version,
             winner : req.body.winner,
             createAt: new Date(),
            

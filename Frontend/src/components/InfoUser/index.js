@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link , useNavigate} from 'react-router-dom'
+import { useLocation, useNavigate, Navigate} from 'react-router-dom'
 import "./style.scss"
 import { useDispatch,  } from 'react-redux';
 import {setCurrentBoard} from '../../redux/nimSlice'
@@ -11,10 +11,13 @@ import { generateRandomNumberOfPileArray, generateRandomStoneArray } from "../..
 import { useEffect } from "react";
 
 
+
 function InfoUser(){
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const {state} = useLocation();
+    // const fromPath = state?.from;
 
     //set-info
     const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4),10);
@@ -70,6 +73,8 @@ function InfoUser(){
 
             await dispatch(setTurn(playerThreeName.value));
             navigate('/playvsbot');
+            // return <Navigate to="/playvsbot" state={{ from: '/info-user' }} replace />
+
         }
     }
 

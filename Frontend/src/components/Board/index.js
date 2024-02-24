@@ -71,7 +71,60 @@ function Board() {
         setStonesRemoved(sum)
     }, [initialBoard]);
 
-    
+    //[post] data backend
+    useEffect(() => {
+        if (currentBoard.every(value => value === 0)) {
+            let winner = '';
+                                    
+            if(version === "Normal Game"){
+                winner = currentPlayer;
+            }else{
+                winner = (currentPlayer === player1 ? player2 : player1) 
+            }
+
+            gameService.postData({
+                player1: player1,
+                player2: player2,
+                currentBoard: initialBoard,
+                turn: randomPlayer,
+                gameMode: gameMode,
+                version: version,
+                winner: winner,
+                solvedBoard: solveBoard,
+            }).then(() => {
+                // Sau khi đã ghi dữ liệu, bạn có thể thực hiện các hành động cần thiết ở đây, ví dụ: 
+                // navigate("/home") 
+                // hoặc navigate("/history")
+            }).catch(error => {
+                console.error("Error while posting data:", error);
+            });
+        }       
+    }, [solveBoard]);    
+
+    //set-auto-changTurn
+    useEffect(() => {
+        let sum = 0;
+        for(let i = 0; i< currentBoard.length ; i++){
+            sum += currentBoard[i];
+            
+        }
+        if((currentBoard[currentRow] - 1) === 0){
+            setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
+            setcurrentRow(null);
+
+            let newMove = { 
+                player: currentPlayer, 
+                stonesRemoved: 1, 
+                rowIndex: currentRow 
+            };
+            setSolveBoard([...solveBoard, newMove]);
+
+            if(currentBoard[currentRow] === 1){
+                setStonesRemoved(sum-1);
+            }
+        }
+
+    }, [currentRow]);
 
     //remove-stones
     const handleRemove = async(rowIndex, colIndex) => {    
@@ -103,9 +156,6 @@ function Board() {
                             await dispatch(setCurrentBoard(newBoard));
             
                             if (newBoard[rowIndex] === 0) {
-                                // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
-                                // newBoard.splice(rowIndex,1);
-
                                 handleChangeTurn();
                             }
                         }
@@ -120,18 +170,6 @@ function Board() {
                                 winner = (currentPlayer === player1 ? player2 : player1) 
                             }
                             
-                            //post-data
-                            await gameService.postData({
-                                player1: player1,
-                                player2: player2,
-                                currentBoard: initialBoard,
-                                solveBoard: solveBoard,
-                                turn: randomPlayer,
-                                gameMode: gameMode,
-                                winner: winner,
-                            })
-
-
                             Swal.fire({
                                 title: `Congratulation "${winner}"!`,
                                 imageUrl: require("../../asset/gif/4b8.gif"),
@@ -152,7 +190,7 @@ function Board() {
                                 }
                               });
     
-                            await dispatch(setWinner(currentPlayer));                         
+                            await dispatch(setWinner(currentPlayer));                      
     
                         }
                 }
@@ -164,14 +202,11 @@ function Board() {
                     && colIndex >= 0 && colIndex < currentBoard[rowIndex] )
                     {
                         let newBoard = [...currentBoard];
-                        let cntRemove = 0;
                         await setcurrentRow(rowIndex);
                         
                         if (currentRow === null) {
                             // Nếu chưa có hàng nào được ghim, ghim hàng đang xử lý
                             newBoard[rowIndex] -= 1;
-                            // cntRemove++;
-                            // await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
 
                             if (newBoard[rowIndex] === 0) {
                                 newBoard.splice(rowIndex,1);
@@ -185,8 +220,6 @@ function Board() {
                         if (rowIndex === currentRow) {
                             // Chỉ xử lý nếu đang ở hàng đã được ghim
                             newBoard[rowIndex] -= 1;            
-                            // cntRemove++;
-                            // await setStonesRemoved((prevStonesRemoved) => prevStonesRemoved + cntRemove);
 
                             if (newBoard[rowIndex] === 0) {
                                 // remove phan tu  = 0
@@ -197,18 +230,16 @@ function Board() {
                             await dispatch(setCurrentBoard(newBoard));
 
                         }
-  
-                        // Nếu tất cả các giá trị trong mảng đều bằng 0
+
                         if (newBoard.every(value => value === 0)) {
-                            
+
                             let winner = '';
-                            
                             if(version === "Normal Game"){
                                 winner = currentPlayer;
                             }else{
                                 winner = (currentPlayer === player1 ? player2 : player1) 
                             }
-
+                            
                             Swal.fire({
                                 title: `Congratulation "${winner}"!`,
                                 imageUrl: require("../../asset/gif/4b8.gif"),
@@ -227,20 +258,9 @@ function Board() {
                                 }else{
                                     navigate("/history")
                                 }
-                              });                            
+                              });
     
-                            await dispatch(setWinner(winner));
-
-                            //post-data
-                            await gameService.postData({
-                                player1: player1,
-                                player2: player2,
-                                currentBoard: initialBoard,
-                                turn: randomPlayer,
-                                gameMode: gameMode,
-                                winner: winner,
-                                solvedBoard: solveBoard,
-                            })
+                            await dispatch(setWinner(currentPlayer));                      
     
                         }
                 }
@@ -255,38 +275,31 @@ function Board() {
 
     const calculateBotRemove = async() => {        
         let nimSum = calculateNimSum(currentBoard, currentBoard.length);
-        
         if(version === "Normal Game"){
             if(nimSum !== 0){
                 for(let rowIndex = 0; rowIndex < currentBoard.length; rowIndex++){
-                    const currentStones = currentBoard[rowIndex];
-                    const stonesRemoved = currentBoard[rowIndex] ^ nimSum;
+                    const xNimsum = currentBoard[rowIndex] ^ nimSum;
                   
-                    if(stonesRemoved < currentBoard[rowIndex]){
+                    if(xNimsum < currentBoard[rowIndex]){
                         let newBoard = [...currentBoard];
-    
-                        if(stonesRemoved === 0){
-                            newBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];  
-                            Swal.fire({
-                                position: "top-end",
-                                title: `Bot removed "${currentBoard[rowIndex]}" piles "${[rowIndex]}"!`,
-                                showConfirmButton: false,
-                                timer: 3000
-                            });       
-                        }else{
-                            newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
-                            Swal.fire({
-                                position: "top-end",
-                                title: `Bot removed "${stonesRemoved}" piles "${[rowIndex]}"!`,
-                                showConfirmButton: false,
-                                timer: 3000
-                            });
-                        }
+                        let stonesRemove = currentBoard[rowIndex] - xNimsum;
+                        newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemove;
+                    
+                        
+                        Swal.fire({
+                            position: "top-end",
+                            title: `Bot removed "${stonesRemove}" piles in row "${[rowIndex]}"!`,
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
     
                         setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
                             playerTurn : currentPlayer,
-                            stonesRemoved: currentStones,
+                            stonesRemoved: stonesRemove,
+                            rowIndex: rowIndex,
                          }]);
+                setStonesRemoved(stonesRemoved - stonesRemove);
+
                 
                         if (newBoard[rowIndex] === 0) {
                             // handleChangeTurn();
@@ -332,16 +345,6 @@ function Board() {
     
                                 await dispatch(setWinner(winner));
         
-                                //post-data
-                                await gameService.postData({
-                                    player1: player1,
-                                    player2: player2,
-                                    currentBoard: initialBoard,
-                                    turn: randomPlayer,
-                                    gameMode: gameMode,
-                                    winner: winner,
-                                    solvedBoard: solveBoard,
-                                })   
                             }   
                         }
                         break;
@@ -354,11 +357,12 @@ function Board() {
                 getRandomRemove();
                 BotChangeTurn();
             }   
-        } else if(version === "Misère game"){
+        } 
+        else if(version === "Misère game"){
             let tmp = [...currentBoard];
             let i, i1 = 0, index = 0;
 
-            //truong hop dat biet
+            //truong hop dat biet tinh special_case
             for(i = 0 ; i < tmp.length ; i++){
                 if(tmp[i] === 1){
                     i1++;
@@ -366,23 +370,34 @@ function Board() {
                     index = i;
                 }
             }
-
+            //special_case
             if(i1 === (currentBoard.length - 1)){
+                let stonesRemove;
                 if(tmp.length % 2){
+                    stonesRemove = ( tmp[index] - 1);
                     tmp[index] =  tmp[index] - ( tmp[index] - 1);
-                    await SetBotRemoved(tmp[index] - 1)
+                    // await SetBotRemoved(tmp[index] - 1)
                 }else{
+                    stonesRemove = tmp[index];
                     tmp[index] =  tmp[index] -  tmp[index];
-                    await SetBotRemoved(tmp[index]);
+                    // await SetBotRemoved(tmp[index]);
                 }
+
+                setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
+                    playerTurn : currentPlayer,
+                    stonesRemoved: stonesRemove,
+                    rowIndex: index,
+                }]);
+                setStonesRemoved(stonesRemoved - stonesRemove);
 
                 if (tmp[index] === 0) {
                     tmp.splice(index,1);
                 }
                 await dispatch(setCurrentBoard(tmp));
+
                 Swal.fire({
                     position: "top-end",
-                    title: `Bot removed "${currentBoard[index]}" piles "${[index]}"!`,
+                    title: `Bot removed "${currentBoard[index]}" piles in row "${[index]}"!`,
                     showConfirmButton: false,
                     timer: 3000
                 });
@@ -391,51 +406,36 @@ function Board() {
             else{
                 if(nimSum !== 0){
                     for(let rowIndex = 0; rowIndex < currentBoard.length; rowIndex++){
-                        const stonesRemoved = currentBoard[rowIndex] ^ nimSum;
-
-                        if(stonesRemoved < currentBoard[rowIndex]){
+                        const xNimsum = currentBoard[rowIndex] ^ nimSum;
+                      
+                        if(xNimsum < currentBoard[rowIndex]){
                             let newBoard = [...currentBoard];
+                            let stonesRemove = currentBoard[rowIndex] - xNimsum;
+                            newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemove;
+                        
+                            
+                            Swal.fire({
+                                position: "top-end",
+                                title: `Bot removed "${stonesRemove}" piles in row "${[rowIndex]}"!`,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
         
-                            if(stonesRemoved === 0){
-                                newBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];  
-                                Swal.fire({
-                                    position: "top-end",
-                                    title: `Bot removed "${currentBoard[rowIndex]}" piles "${[rowIndex]}"!`,
-                                    showConfirmButton: false,
-                                    timer: 3000
-                                }); 
-                                await SetBotRemoved(currentBoard[rowIndex]);
-                                
-                                setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-                                    player : currentPlayer,
-                                    stonesRemoved: currentBoard[rowIndex],
-                                    rowIndex: rowIndex,
+                            setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
+                                playerTurn : currentPlayer,
+                                stonesRemoved: stonesRemove,
+                                rowIndex: rowIndex,
+                             }]);
+                setStonesRemoved(stonesRemoved - stonesRemove);
 
-                                 }]);
-                            }else{
-                                newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
-                                Swal.fire({
-                                    position: "top-end",
-                                    title: `Bot removed "${stonesRemoved}" piles "${[rowIndex]}"!`,
-                                    showConfirmButton: false,
-                                    timer: 3000
-                                });
-                                await SetBotRemoved(stonesRemoved);
-
-                                setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-                                    player : currentPlayer,
-                                    stonesRemoved: stonesRemoved,
-                                    rowIndex: rowIndex,
-
-                                 }]);
-                            }
                     
                             if (newBoard[rowIndex] === 0) {
+                                // handleChangeTurn();
                                 newBoard.splice(rowIndex,1);
-                            }     
-                           
+                            }
                             await dispatch(setCurrentBoard(newBoard));
-                        
+                            
+        
                             if(nimSum === currentBoard[rowIndex] && currentBoard.length === 1 ){
                                 let emptyBoard = [...currentBoard];
                                 emptyBoard[rowIndex] = currentBoard[rowIndex] - currentBoard[rowIndex];
@@ -452,7 +452,7 @@ function Board() {
                                     }
         
                                     Swal.fire({
-                                        title: `Congratulation "${winner}"!`,
+                                        title: `Congratulation "${currentPlayer}"!`,
                                         imageUrl: require("../../asset/gif/4b8.gif"),
                                         imageWidth: 350,
                                         imageHeight: 250,
@@ -473,16 +473,6 @@ function Board() {
         
                                     await dispatch(setWinner(winner));
             
-                                    //post-data
-                                    await gameService.postData({
-                                        player1: player1,
-                                        player2: player2,
-                                        currentBoard: initialBoard,
-                                        turn: randomPlayer,
-                                        gameMode: gameMode,
-                                        winner: winner,
-                                        solvedBoard: solveBoard,
-                                    })   
                                 }   
                             }
                             break;
@@ -494,7 +484,7 @@ function Board() {
                 {
                     getRandomRemove();
                     BotChangeTurn();
-                } 
+                }
                 }
             }
     }
@@ -507,10 +497,12 @@ function Board() {
         let newBoard = [...currentBoard];
         
         newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
+
+
         // setcurrentRow(rowIndex);
         Swal.fire({
             position: "top-end",
-            title: `Bot removed "${stonesRemoved} piles ${rowIndex}"!`,
+            title: `Bot removed ${stonesRemoved} piles in row ${rowIndex}!`,
             showConfirmButton: false,
             timer: 3000
         });
@@ -531,34 +523,28 @@ function Board() {
         return {rowIndex, stonesRemoved};
     }
     
-    //set-auto-changTurn
-    useEffect(() => {
-
-        if((currentBoard[currentRow] - 1) === 0){
-            setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
-            setcurrentRow(null);
-        }
-
-    }, [currentRow]);
 
     //set-changTurn
     const handleChangeTurn = async(e) => {  
-        console.log("currentRow == ", currentRow);
         if(currentRow !== null){
-            console.log("currentBoard in", currentBoard);
             let sum = 0;
             for(let i = 0; i< currentBoard.length ; i++){
                 sum += currentBoard[i];
-                console.log(currentBoard[i]);
             }
-    
+            console.log("sum ----", sum);
+
+            if((currentBoard[currentRow] - 1) === 0){
+                sum -=1 ;
+            }
+
             let newMove = { 
                 player: currentPlayer, 
                 stonesRemoved: (stonesRemoved - sum), 
                 rowIndex: currentRow 
             };
             setSolveBoard([...solveBoard, newMove]);
-    
+
+            setStonesRemoved(sum);
             await setcurrentRow(null);
             setcurrentPlayer(currentPlayer === player1 ? player2 : player1);      
         }else{
@@ -568,15 +554,10 @@ function Board() {
 
 
     const BotChangeTurn = async() => {
-
-        let sum = 0;
-        for(let i = 0; i< currentBoard.length ; i++){
-            sum += currentBoard[i];
-        }
-        await setStonesRemoved(sum);
         setcurrentPlayer(currentPlayer === player1 ? player2 : player1);     
     }
 
+    //Change-Board
     const handleChangeBoard = async() => {
         const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4),10);
         await dispatch(setCurrentBoard(randomBoard));

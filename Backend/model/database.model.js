@@ -13,6 +13,7 @@ const databaseSchema = new mongoose.Schema(
       type: Array,
       default: []
     },
+    version: String,
     gameMode: String,
     winner : String,
     createAt: Date,
