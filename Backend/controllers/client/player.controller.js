@@ -1,4 +1,3 @@
-// const modelData = require("../../model/database.model");
 const modelPlayer= require("../../model/playerSchema");
 
 module.exports.playerGet = async (req, res) => {
@@ -15,6 +14,7 @@ module.exports.playerPost = async (req, res) => {
             user1: req.body.user1,
             user2: req.body.user2,
             currentBoard: req.body.currentBoard,
+            version: req.body.version,
             computer: req.body.bot,
             turn: req.body.turn,
             solvedBoard: req.body.solvedBoard,
