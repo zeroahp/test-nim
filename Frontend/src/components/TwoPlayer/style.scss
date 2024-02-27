@@ -1,11 +1,14 @@
 
 .container{
-    width: 100%;
-    height: 100%;
+    
 
     &.twoPlayer{
         display: flex;
         flex-direction: column;
+        width: 100%;
+        height: auto;
+
+
         //menu ------------------
         .twoPlayer-menu{
             display: flex;
@@ -106,59 +109,59 @@
             display: flex;
             align-items: center;
             &.two{
-                flex:1;
-            }
-            
-            .user{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                img{
-                    width: 150px;
-                    height: 150px;
-                    background-size: contain;
-
-                    @media screen and (max-width: 768px){
-                        width: 100px;
-                        height: 100px;
+                margin-top: 150px;
+                .user{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    img{
+                        width: 150px;
+                        height: 150px;
+                        background-size: contain;
+    
+                        @media screen and (max-width: 768px){
+                            width: 100px;
+                            height: 100px;
+                        }
+    
+                        @media screen and (max-width: 540px){
+                            width: 70px;
+                            height: 70px;
+                        }
+    
+                        @media screen and (max-width: 450px){
+                            width: 40px;
+                            height: 40px;
+                        }
                     }
-
-                    @media screen and (max-width: 540px){
-                        width: 70px;
-                        height: 70px;
+        
+                    .info-user{
+                        // background-color: white;
+                        // border-radius: 25px;
+                        border-bottom: 2px solid white;
+                        border-radius: 15px;
+                        font-size: 0.9rem;
+                        padding: 5px 10px;
+                        margin-top: 10px;
+                        color: white;
+        
+                        @media screen and (max-width: 520px){
+                            font-size: 0.5rem;
+                        }
+    
+                        &.active{
+                            background:linear-gradient(90deg, rgb(55, 38, 187) 0%, rgb(60, 150, 206) 30%, rgb(51, 234, 197) 100%);
+                            // color: white;
+                        }
                     }
-
-                    @media screen and (max-width: 450px){
-                        width: 40px;
-                        height: 40px;
-                    }
+        
                 }
     
-                .info-user{
-                    // background-color: white;
-                    // border-radius: 25px;
-                    border-bottom: 2px solid white;
-                    border-radius: 15px;
-                    font-size: 0.9rem;
-                    padding: 5px 10px;
-                    margin-top: 10px;
-                    color: white;
-    
-                    @media screen and (max-width: 520px){
-                        font-size: 0.5rem;
-                    }
 
-                    &.active{
-                        background:linear-gradient(90deg, rgb(55, 38, 187) 0%, rgb(60, 150, 206) 30%, rgb(51, 234, 197) 100%);
-                        // color: white;
-                    }
-                }
-    
             }
             
+                        
         }
     }
 
-    
-}
