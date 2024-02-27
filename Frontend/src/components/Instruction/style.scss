@@ -8,12 +8,12 @@
         font-family: 'Lemon', serif;
         display: flex;
         flex-direction: column;
-
         opacity: 0; /* Ẩn phần tử khi chưa xuất hiện */
         animation: fadeInDown 2s ease-out forwards; /* Áp dụng animation trong 1 giây */
+        
         .box-instruction{
 
-            margin-top: 60px;
+            margin-top: 20px;
             color: white;
             border-radius: 25px;
             padding: 30px 50px;
@@ -24,11 +24,32 @@
             border-top: 1.5px solid white;     
             border-bottom: 1.5px solid white;
             
+            @media screen and (max-width: 1030px){
+                font-size: 0.5rem;
+                width: 800px;
+                 
+            }
+
+            @media screen and (max-width: 850px){
+                width: 650px;
+                
+            }
+            @media screen and (max-width: 685px){
+                width: 500px;
+                
+            }
 
             .box-contain{
                 display: flex;
+                justify-content: space-between;
+
+                
 
                 .box-left{
+                    @media screen and (max-width: 1200px){
+                        width: 450px; 
+                          
+                    }
                     .nim-history{
                         text-align: left;
                         h4{
@@ -59,6 +80,10 @@
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
+
+                    @media screen and (max-width: 685px){
+                        display: none;                             
+                    }
                     
                     span{
                         display: inline-block;
@@ -70,6 +95,13 @@
                         background-color: white; 
                         box-shadow: 0px 0px 15px white;
     
+                        @media screen and (max-width: 1030px){
+                            width: 15px; 
+                            height: 15px; 
+                            margin: 6px 3px;                               
+                        }
+
+                        
                     }
                  
                 }
@@ -88,6 +120,17 @@
 
         .btn-play{
             margin-top: 30px;
+
+            @media screen and (max-width: 1200px){
+                margin-bottom: 100px;
+                z-index: 200;
+                
+            }
+            @media screen and (max-width: 850px){
+                margin-bottom: 70px;
+                
+            }
+
             a{
                 text-decoration: none;
                 padding: 8px;
