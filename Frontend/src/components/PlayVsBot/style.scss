@@ -2,22 +2,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Foldit:wght@700;800&family=Lemon&display=swap');
 
 .container{
-    width: 100%;
-    height: 100%;
+   
     font-family: 'Foldit', sans-serif;
     font-family: 'Lemon', serif;
-
 
     &.playvsBot{
         display: flex;
         flex-direction: column;
+        width: 100%;
+        height: auto;
 
         //menu ------------------
         .playvsBot-menu{
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: space-around;
             padding: 10px 0;
+            margin-top: 50px;
             width: 100%;
             font-size: 1rem;
 
@@ -34,7 +35,9 @@
                     color: white;
                     font-size: 0.9rem;
                     transition: transform 0.2s ease-in-out; 
-                
+                    @media screen and (max-width: 520px){
+                        font-size: 0.5rem;
+                    }
                     &:hover{
                         transform: scale(1.1); 
                         cursor: pointer;
@@ -68,9 +71,12 @@
                     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
                     backdrop-filter: blur(5px);
                     -webkit-backdrop-filter: blur(5px);
-                    min-width: 120px;
+                    min-width: 115px;
                     z-index: 1;
-    
+                    @media screen and (max-width: 520px){
+                        font-size: 0.5rem;
+                        min-width: 80px;
+                    }
     
                     a {
                         color: white;
@@ -95,7 +101,7 @@
                         display: block;
                       }
                 }
-              }
+            }
         }
           
           
@@ -108,39 +114,60 @@
             align-items: center;
             
             &.two{
-                flex:1;
-            }
-            
-            .user{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                img{
-                    width: 150px;
-                    height: 150px;
-                    background-size: contain;
-                }
+                margin-top: 150px;
+                .user{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    
+                    img{
+                        width: 150px;
+                        height: 150px;
+                        background-size: contain;
     
-                .info-user{
-
-                    border-bottom: 2px solid white;
-                    border-radius: 15px;
-                    font-size: 0.9rem;
-                    padding: 5px 10px;
-                    margin-top: 10px;
-                    color: white;
+                        @media screen and (max-width: 768px){
+                            width: 100px;
+                            height: 100px;
+                        }
     
-                    &.active{
-                        background:linear-gradient(90deg, rgb(55, 38, 187) 0%, rgb(60, 150, 206) 30%, rgb(51, 234, 197) 100%);
-                        // color: white;
+                        @media screen and (max-width: 540px){
+                            width: 70px;
+                            height: 70px;
+                        }
+    
+                        @media screen and (max-width: 450px){
+                            width: 40px;
+                            height: 40px;
+                        }
+                        
                     }
+        
+                    .info-user{
+    
+                        border-bottom: 2px solid white;
+                        border-radius: 15px;
+                        font-size: 0.9rem;
+                        padding: 5px 10px;
+                        margin-top: 10px;
+                        color: white;
+                        
+                        @media screen and (max-width: 520px){
+                            font-size: 0.5rem;
+                        }
+                        &.active{
+                            background:linear-gradient(90deg, rgb(55, 38, 187) 0%, rgb(60, 150, 206) 30%, rgb(51, 234, 197) 100%);
+                        }
+                    }
+        
                 }
     
             }
             
+                        
         }
     }
 
     
 }
+

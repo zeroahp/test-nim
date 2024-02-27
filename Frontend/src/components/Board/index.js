@@ -370,6 +370,7 @@ function Board() {
                     index = i;
                 }
             }
+            
             //special_case
             if(i1 === (currentBoard.length - 1)){
                 let stonesRemove;
@@ -607,7 +608,9 @@ function Board() {
                     Change Turn
                 </button>
 
-                <button className="control change-board" title="The board can only be changed if no moves have been made yet." onClick={handleChangeBoard}>Change Board</button>
+                <button className="control change-board" title="The board can only be changed if no moves have been made yet." onClick={handleChangeBoard}>
+                    Change Board
+                </button>
             </div>
         </>
     )

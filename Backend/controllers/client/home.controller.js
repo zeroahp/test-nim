@@ -1,6 +1,6 @@
-const test = require("../../helpers/test");
+// const test = require("../../helpers/test");
 
 module.exports.index = async (req, res) => {
-res.send("ok");
-test();
+    res.send("ok");
+    // test();
 }

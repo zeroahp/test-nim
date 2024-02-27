@@ -75,8 +75,7 @@ function TwoPlayer(){
                         </div>
                     </div>
                 </div>
-                <div className="row two">
-                    
+                <div className="row two">  
                     <div className="col-2 user">
                         <img src={user1} alt="User 1"/>
                         <div className="info-user user1">

@@ -27,14 +27,17 @@
                     padding: 5px;
                     color: white;
                     font-size: 0.9rem;
-
+                    transition: transform 0.2s ease-in-out; 
+                    @media screen and (max-width: 520px){
+                        font-size: 0.5rem;
+                    }
                     &:hover{
-                        background-color: white;
-                        color: black;
+                        transform: scale(1.1); 
                         cursor: pointer;
-                        
-                    }   
+            
+                    }  
                 }
+            }
             }
             
 
@@ -64,7 +67,10 @@
                     -webkit-backdrop-filter: blur(5px);
                     min-width: 120px;
                     z-index: 1;
-    
+                    @media screen and (max-width: 520px){
+                        font-size: 0.5rem;
+                        min-width: 80px;
+                    }
     
                     a {
                         color: white;
@@ -112,6 +118,21 @@
                     width: 150px;
                     height: 150px;
                     background-size: contain;
+
+                    @media screen and (max-width: 768px){
+                        width: 100px;
+                        height: 100px;
+                    }
+
+                    @media screen and (max-width: 540px){
+                        width: 70px;
+                        height: 70px;
+                    }
+
+                    @media screen and (max-width: 450px){
+                        width: 40px;
+                        height: 40px;
+                    }
                 }
     
                 .info-user{
@@ -124,6 +145,10 @@
                     margin-top: 10px;
                     color: white;
     
+                    @media screen and (max-width: 520px){
+                        font-size: 0.5rem;
+                    }
+
                     &.active{
                         background:linear-gradient(90deg, rgb(55, 38, 187) 0%, rgb(60, 150, 206) 30%, rgb(51, 234, 197) 100%);
                         // color: white;
@@ -131,18 +156,6 @@
                 }
     
             }
-
-            // .row.one {
-            //     height: 20px; /* Adjust the height as needed */
-            // }
-    
-            // .row.two {
-            //     height: 60px; /* Adjust the height as needed */
-            // }
-    
-            // .row.three {
-            //     height: 30px; /* Adjust the height as needed */
-            // }
             
         }
     }
