@@ -3,7 +3,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'http://localhost:3001',
+            target: 'https://test-nim-server.vercel.app/',
             changeOrigin: true,
         })
     );

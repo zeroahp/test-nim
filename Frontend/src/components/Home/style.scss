@@ -12,7 +12,12 @@
     align-items: center;
     text-align: center;
     
-    .home__title{
+    .home{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .home__title{
         font-size: 8rem;
         font-family: 'Space Games', sans-serif;                                                           
         color: white;
@@ -29,6 +34,7 @@
         text-align: center;
         display: flex;
         flex-direction: column;
+        align-items: center;
         justify-content: center;
         border-radius: 50px;
         background: #d7d7d733;
@@ -72,6 +78,7 @@
             }
             
         }
+    }
     }
 }
 
