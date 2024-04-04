@@ -1,7 +1,7 @@
 import createApiClient from "../api.service";
 
 class GameServiceClient {
-    constructor(baseUrl = "http://localhost:3001/api"){
+    constructor(baseUrl = "https://test-nim-server.vercel.app/api"){
         this.api = createApiClient(baseUrl);
     }
 

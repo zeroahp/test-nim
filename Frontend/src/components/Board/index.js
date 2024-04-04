@@ -298,7 +298,7 @@ function Board() {
                             stonesRemoved: stonesRemove,
                             rowIndex: rowIndex,
                          }]);
-                setStonesRemoved(stonesRemoved - stonesRemove);
+                        setStonesRemoved(stonesRemoved - stonesRemove);
 
                 
                         if (newBoard[rowIndex] === 0) {
@@ -427,7 +427,7 @@ function Board() {
                                 stonesRemoved: stonesRemove,
                                 rowIndex: rowIndex,
                              }]);
-                setStonesRemoved(stonesRemoved - stonesRemove);
+                            setStonesRemoved(stonesRemoved - stonesRemove);
 
                     
                             if (newBoard[rowIndex] === 0) {
