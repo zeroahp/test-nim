@@ -27,8 +27,12 @@
         animation: shakeRotate 0.5s infinite; /* Lặp vô hạn animation */
     }
     
-   
-    .home__box{
+    .row{
+       display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      .home__box{
         width: 350px;
         height: 400px;
         text-align: center;
@@ -78,6 +82,7 @@
             }
             
         }
+    }
     }
     }
 }

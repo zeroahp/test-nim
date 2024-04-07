@@ -25,8 +25,11 @@
           animation: shakeRotate 0.5s infinite; /* Lặp vô hạn animation */
         }
         
-       
-        .gameMode__box{
+        .row{
+           display: flex;
+            flex-direction: column;
+            justify-content: center;
+          .gameMode__box{
             width: 300px;
             height: 250px;
             text-align: center;
@@ -76,6 +79,8 @@
                 
             }
         }
+        }
+        
       }
     
     

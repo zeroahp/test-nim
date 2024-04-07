@@ -28,7 +28,11 @@
     }
     
    
-    .info__box{
+    .row{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .info__box{
         width: 350px;
         height: 400px;
         text-align: center;
@@ -99,6 +103,8 @@
         }
         
     }
+    }
+    
 }
 
 @keyframes shakeRotate {

@@ -14,7 +14,7 @@ function TwoPlayer(){
     
     const userName1 = useSelector((state) => state.NimGame.player1);
     const userName2 = useSelector((state) => state.NimGame.player2);
-    const playerRandom = useSelector((state) => state.NimGame.turn);
+    // const playerRandom = useSelector((state) => state.NimGame.turn);
     const currentPlayer = useSelector((state) => state.NimGame.currentplayer);
     const navigate = useNavigate();
     console.log("currentPlayer 2", currentPlayer);
