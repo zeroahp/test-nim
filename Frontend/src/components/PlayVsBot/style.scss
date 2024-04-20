@@ -18,10 +18,17 @@
             align-items: center;
             justify-content: space-around;
             padding: 10px 0;
-            margin-top: 50px;
+            margin-top: 30px;
             width: 100%;
             font-size: 1rem;
 
+            .version-game{
+                color: white;
+                border-top: 1px solid white;
+                border-bottom: 1px solid white;
+                padding: 5px 0;
+                border-radius: 5px;
+            }
             .one{
                 margin: 0;
                 .btn-back{

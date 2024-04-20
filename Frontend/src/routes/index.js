@@ -6,9 +6,8 @@ import History from '../pages/History'
 import Instruction from '../pages/Instruction'  
 import Info from '../pages/InfoUser'  
 import GameMode from '../pages/GameMode'  
+import SaveGame from '../pages/SaveGame'  
 import { Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-
 
 export const routes = [
   {
@@ -25,12 +24,17 @@ export const routes = [
       },
       {
         path: "two-player",
-        element: <TwoPlayer />
+        element: <TwoPlayer />,
       },
       {
         path: "game-mode",
-        element: <GameMode />
+        element: <GameMode />,
       },
+      {
+        path: "saved-game",
+        element: <SaveGame />,
+      },
+      
       
       {
         path: "playvsbot",

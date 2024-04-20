@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Foldit:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Foldit:wght@700;800&family=Lemon&display=swap');
+@import url('https://fonts.cdnfonts.com/css/gameboy-gamegirl');
+@import url('https://fonts.cdnfonts.com/css/game-power');
+@import url('https://fonts.cdnfonts.com/css/space-games');
+
+
+.container{
+    // display: flex;
+    // justify-content: center;
+    height: 100%;
+    // align-items: center;
+    // text-align: center;
+    
+    .saved-game{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .title{
+            font-size: 8rem;
+            font-family: 'Space Games', sans-serif;                                                                                                                                
+            color: white;    
+            letter-spacing: .05em;
+            margin: 0;
+            padding: 0;
+            margin-left: -10px;
+            text-shadow: 4px 4px 0px #443f3f, 7px 7px 0px #1A1D28;
+            animation: shakeRotate 0.5s infinite; /* Lặp vô hạn animation */
+            margin-top: 50px;
+          }
+        
+       
+        .row{
+            margin-top: 30px;
+
+            width: 300px;
+          .id__box{
+            // width: 300px;
+            height: 250px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            border-radius: 50px;
+            background: #d7d7d733;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-top: 1.5px solid white;     
+            border-bottom: 1.5px solid white;    
+    
+            opacity: 0; /* Ẩn phần tử khi chưa xuất hiện */
+            animation: fadeInDown 2s ease-out forwards; /* Áp dụng animation trong 1 giây */
+    
+            color: white;
+            text-decoration: none;
+            font-family: 'Foldit', sans-serif;
+            font-family: 'Lemon', serif;
+            text-shadow: 0px 4px 0px #565563, 7px 4px 0px rgba(0, 0, 0, 0.2);
+    
+            h4{
+              font-size: 2rem;
+              letter-spacing: .02em;
+              margin-bottom: 15px;
+            }
+            
+    
+            .fill-id{    
+              input{
+                border-radius: 40px;
+                padding: 0 20px;
+                outline: none;
+                border: 1px solid rgb(43, 64, 226) ;
+                height: 40px;
+                margin-bottom: 25px;
+              }
+    
+            }
+    
+            form{
+                .btn-submit{
+                  background: none;
+                  border: none;
+                  color: white;
+                  text-decoration: none;
+                  font-size: 1.2rem;
+                  font-family: 'Foldit', sans-serif;
+                  font-family: 'Lemon', serif;
+                  padding: 8px 20px;
+                  border-radius: 30px;
+                  border-bottom: 1px solid white;
+                  letter-spacing: .02em;
+                  text-shadow: 0px 4px 0px #565563, 7px 4px 0px rgba(0, 0, 0, 0.2);
+                  &:hover{
+                      transition: transform 0.4s ease;
+                      background-color: #2d2a5a;
+    
+                  }
+              }
+            }
+            
+        }
+        }
+    }
+    
+    
+}
+
+@keyframes shakeRotate {
+    0%, 100% {
+      transform: rotate(0deg); /* Không xoay */
+    }
+    15% {
+      transform: rotate(-1deg); /* Xoay âm 10 độ */
+    }
+    50% {
+      transform: rotate(10deg); /* Xoay dương 10 độ */
+    }
+    75% {
+      transform: rotate(-1deg); /* Xoay âm 10 độ */
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px); /* Di chuyển lên trên 50px */
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0); /* Hiển thị ở vị trí ban đầu */
+      }
+}

@@ -1,4 +1,5 @@
 import Board from "../Board/index"
+import SavedBoard from "../SaveBoard/index"
 import "./style.scss"
 import user1 from "../../asset/images/1.png"
 import bot from "../../asset/images/3.png"
@@ -8,14 +9,17 @@ import { Link,useNavigate } from "react-router-dom"
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
+import gameService from "../../service/client/game.service";
 
 function TwoPlayer(){
     
     const userName1 = useSelector((state) => state.NimGame.player1);
     const userName2 = useSelector((state) => state.NimGame.player2);
-    const playerRandom = useSelector((state) => state.NimGame.turn);
+    const savedBoard = useSelector((state) => state.NimGame.savedBoard);
     const currentPlayer = useSelector((state) => state.NimGame.currentplayer);
-    
+    const version = useSelector((state) => state.NimGame.version);
+
+    console.log(savedBoard);
     const navigate = useNavigate();
 
 
@@ -64,6 +68,9 @@ function TwoPlayer(){
                         </p>
                         
                     </div>
+                    <div className="version-game">
+                        {version}
+                    </div>
                     <div class="dropdown">
                         <button class="dropbtn">
                             <FontAwesomeIcon icon={faBars} />
@@ -83,9 +90,18 @@ function TwoPlayer(){
                         </div>
                     </div>
 
+                    {savedBoard ? 
+                    (
                     <div className="col-8">
-                        <Board />
+                        <SavedBoard />
                     </div>
+                    )
+                    :
+                    (<div className="col-8">
+                        <Board />
+                    </div>)
+                    }
+                    
 
                     <div className="col-2 user">
                         <img src={bot} alt="User 2"/>

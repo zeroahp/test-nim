@@ -16,8 +16,7 @@ function InfoUser(){
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {state} = useLocation();
-    // const fromPath = state?.from;
+
 
     //set-info
     const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4),10);

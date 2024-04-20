@@ -2,12 +2,18 @@ const mongoose = require('mongoose')
 
 const databaseSchema = new mongoose.Schema(
   {
+    idBoard : String,
     player1: String,
     player2: String,
+    initialBoard:{
+      type: Array,
+      default: [],
+    },
     currentBoard: {
       type: Array,
       default: [],
     },
+    currentPlayer: String,
     turn: String,
     solvedBoard: {
       type: Array,

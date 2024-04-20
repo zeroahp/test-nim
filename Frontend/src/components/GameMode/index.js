@@ -7,11 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 function GameMode(){
 
     const dispatch = useDispatch();
+    
 
     const handleGameMode = (e) => {
         const gameMode = e.target;
         const gameModeValue = gameMode.classList.value;
-        
         dispatch(setGameMode(gameModeValue))
     }
     const version = useSelector((state) => state.NimGame.version);
@@ -21,11 +21,9 @@ function GameMode(){
         <>
            <div className="container gameMode">
                 <div className="gameMode">
-                    <div className="row">
                         <div className="gameMode__title">
                             NIM
                         </div>
-                    </div>
                     <div className="row">
                         <div className="gameMode__box">
 

@@ -29,40 +29,48 @@ p{
 }
 .container{
     &.history{
+        
         opacity: 0; /* Ẩn phần tử khi chưa xuất hiện */
         animation: fadeInDown 2s ease-out forwards; /* Áp dụng animation trong 1 giây */
         font-family: 'Foldit', sans-serif;
         font-family: 'Lemon', serif;
         font-size: 1rem;
-        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        // justify-content: center;
 
         .my-custom-scrollbar {
             position: relative;
             top: 80px;
-            height: 650px;
+            max-height: 650px;
             overflow: auto;
-
-            a{
-                text-decoration: none;
-                padding: 5px 8px;
-                color: white;
-                background: #efeded64;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-                backdrop-filter: blur(5px);
-                -webkit-backdrop-filter: blur(5px);
-                border-top: 1.5px solid white;     
-                border-bottom: 1.5px solid white;
-                border-radius: 10px;
-
-                &:hover{
-                background: #efeded26;
-                }
-            }
+            
         }
         .table-wrapper-scroll-y {
             display: block;
         }
         
+        a{
+            position: relative;
+            top: 80px;
+            text-decoration: none;
+            padding: 5px 8px;
+            color: white;
+            background: #efeded64;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-top: 1.5px solid white;     
+            border-bottom: 1.5px solid white;
+            border-radius: 10px;            
+            text-align: center;
+            margin-top: 20px;
+
+            &:hover{
+                background: #efeded26;
+            }
+        }
     }
 }
 

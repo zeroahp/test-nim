@@ -1,7 +1,7 @@
 import "./style.scss"
 import { calculateNimSum } from "../../utils/caculator";
 import { useSelector } from "react-redux";
-import {setCurrentBoard, setWinner, setCurrentPlayer, setInitial} from '../../redux/nimSlice'
+import {setCurrentBoard, setWinner, setCurrentPlayer, setSavedBoard} from '../../redux/nimSlice'
 import { useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import gameService from "../../service/client/game.service";
@@ -23,7 +23,12 @@ function Board() {
     const randomPlayer = useSelector((state) => state.NimGame.turn);
     const gameMode = useSelector((state) => state.NimGame.gameMode);    
     const version = useSelector((state) => state.NimGame.version);    
-    const initialBoard = useSelector((state) => state.NimGame.initialBoard);    
+    const initialBoard = useSelector((state) => state.NimGame.currentBoard);    
+    const solved = useSelector((state) => state.NimGame.solvedBoard);    
+    const updateSolvedBoard = solved;
+    const idBoard = useSelector((state) => state.NimGame.savedBoard);    
+    console.log("updateSolvedBoard", updateSolvedBoard);
+
     //usestate
     const [currentPlayer, setcurrentPlayer] = useState(randomPlayer);
     const [currentRow, setcurrentRow] = useState();
@@ -31,9 +36,8 @@ function Board() {
     
     const [stonesRemoved, setStonesRemoved] = useState([]);
     const [botRemoved, SetBotRemoved] = useState();
-    
-
     //random-playger
+    
     useEffect(() => {
         if(randomPlayer ){
             dispatch(setCurrentPlayer(randomPlayer));
@@ -54,13 +58,11 @@ function Board() {
     //setCurrentPlayer-turn
     useEffect(() => {
         dispatch(setCurrentPlayer(currentPlayer));
-        
         if (currentPlayer === player2 && player2 === 'Bot') {
             setTimeout(() => {
                 handleBotRemove();   
             }, 3000);
         }
-       
     }, [currentPlayer])
         
     useEffect(() => {
@@ -71,7 +73,7 @@ function Board() {
         setStonesRemoved(sum)
     }, [initialBoard]);
 
-    //[post] data backend
+    //[put] data backend
     useEffect(() => {
         if (currentBoard.every(value => value === 0)) {
             let winner = '';
@@ -82,46 +84,40 @@ function Board() {
                 winner = (currentPlayer === player1 ? player2 : player1) 
             }
 
-            gameService.postData({
-                player1: player1,
-                player2: player2,
-                initialBoard:initialBoard,
+            let updatedSolvedBoard = [...updateSolvedBoard, ...solveBoard];
+            console.log("updatedSolvedBoard", updatedSolvedBoard);
+            gameService.putData(idBoard,{
                 currentBoard: currentBoard,
-                turn: randomPlayer,
-                gameMode: gameMode,
-                version: version,
+                solvedBoard: updatedSolvedBoard,
                 winner: winner,
-                solvedBoard: solveBoard,
-            }).then(() => {
-                
-            }).catch(error => {
-                console.error("Error while posting data:", error);
-            });
+            })
         }       
     }, [solveBoard]);   
 
+    console.log("solboard", solveBoard);
     //Save Game
     const handleSaveBoard = async() => {
         const idBoard = randomIdBoard();
-        console.log(idBoard);
-        gameService.postData({
+        let updatedSolvedBoard = [...updateSolvedBoard, ...solveBoard];
+        console.log("updatedSolvedBoard", updatedSolvedBoard);
+
+        gameService.putData(idBoard,{
             idBoard: idBoard,
             player1: player1,
             player2: player2,
-            initialBoard:initialBoard,
             currentBoard: currentBoard,
             currentPlayer: currentPlayer,
             turn: randomPlayer,
             gameMode: gameMode,
             version: version,
-            solvedBoard: solveBoard,
+            solvedBoard: updatedSolvedBoard,
         })
+        console.log((currentPlayer));
 
         Swal.fire({
             title: "Save game?",
             text: `ID Board "${idBoard}"!`,
-            icon: "question",
-            textColor: "#000000",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             confirmButtonText: "Yes!",
@@ -165,11 +161,11 @@ function Board() {
                         if (currentRow === null) {
                             // Nếu chưa có hàng nào được ghim, ghim hàng đang xử lý
                             await setcurrentRow(updatedRow);
+                        
                             newBoard[rowIndex] -= 1;
                             await dispatch(setCurrentBoard(newBoard));
                             
                             if (newBoard[rowIndex] === 0) {
-
                                 // Nếu đã loại bỏ hết đá từ một hàng, chuyển lượt cho người chơi khác
                                 handleChangeTurn();
                             }
@@ -256,7 +252,6 @@ function Board() {
                             await dispatch(setCurrentBoard(newBoard));
 
                         }
-                        
 
                         if (newBoard.every(value => value === 0)) {
 
@@ -295,12 +290,11 @@ function Board() {
         }   
     }
     
-
     const handleBotRemove = async() => {
         calculateBotRemove();   
     }
 
-    const calculateBotRemove = async() => {        
+    const calculateBotRemove = async() => {   
         let nimSum = calculateNimSum(currentBoard, currentBoard.length);
         if(version === "Normal Game"){
             if(nimSum !== 0){
@@ -321,7 +315,7 @@ function Board() {
                         });
     
                         setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-                            playerTurn : currentPlayer,
+                            player : currentPlayer,
                             stonesRemoved: stonesRemove,
                             rowIndex: rowIndex,
                          }]);
@@ -410,7 +404,7 @@ function Board() {
                 }
 
                 setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-                    playerTurn : currentPlayer,
+                    player : currentPlayer,
                     stonesRemoved: stonesRemove,
                     rowIndex: index,
                 }]);
@@ -448,7 +442,7 @@ function Board() {
                             });
         
                             setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-                                playerTurn : currentPlayer,
+                                player : currentPlayer,
                                 stonesRemoved: stonesRemove,
                                 rowIndex: rowIndex,
                              }]);
@@ -515,7 +509,6 @@ function Board() {
             }
     }
 
-
     const getRandomRemove = async() => {
         const rowIndex = Math.floor(Math.random() * currentBoard.length);
         const stonesRemoved = 1 +  Math.floor(Math.random() * currentBoard[rowIndex]);
@@ -523,7 +516,6 @@ function Board() {
         let newBoard = [...currentBoard];
         
         newBoard[rowIndex] = currentBoard[rowIndex] - stonesRemoved;
-
 
         // setcurrentRow(rowIndex);
         Swal.fire({
@@ -535,7 +527,7 @@ function Board() {
         await SetBotRemoved(stonesRemoved);
 
         setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-            playerTurn : currentPlayer,
+            player : currentPlayer,
             stonesRemoved: stonesRemoved,
             rowIndex: rowIndex,
          }]);
@@ -556,6 +548,7 @@ function Board() {
             for(let i = 0; i< currentBoard.length ; i++){
                 sum += currentBoard[i];
             }
+            console.log("curent ----", currentBoard.length);
             console.log("sum ----", sum);
 
             if((currentBoard[currentRow] - 1) === 0){
@@ -567,6 +560,7 @@ function Board() {
                 stonesRemoved: (stonesRemoved - sum), 
                 rowIndex: currentRow 
             };
+            console.log("new move", newMove);
             setSolveBoard([...solveBoard, newMove]);
 
             setStonesRemoved(sum);
@@ -582,17 +576,20 @@ function Board() {
         setcurrentPlayer(currentPlayer === player1 ? player2 : player1);     
     }
 
-    //ChangeBoard
-    const hasRunRef = useRef(false); // Create a ref with initial value false
-    const handleChangeBoard = async () => {
-    if (!hasRunRef.current) { // Check if the function has already run
-      const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4), 10);
-      await dispatch(setCurrentBoard(randomBoard));
-      await dispatch(setInitial(randomBoard));
-      setSolveBoard([]);
-      hasRunRef.current = true; // Set the flag to true after running
-    }
-  };
+    //Change-Board
+//     const hasRunRef = useRef(false); // Create a ref with initial value false
+//   const handleChangeBoard = async () => {
+//     if (!hasRunRef.current) { // Check if the function has already run
+//       const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4), 10);
+//       await dispatch(setCurrentBoard(randomBoard));
+//     //   await dispatch(setInitial(randomBoard));
+//       setSolveBoard([]);
+//       hasRunRef.current = true; // Set the flag to true after running
+//     }
+//   };
+
+   
+
     
     return (
         <>
@@ -622,8 +619,6 @@ function Board() {
                                 ) )}
                              </tbody> 
                         </table>
-                        
-                        
                     </div> 
                 ) 
                 : (
@@ -637,15 +632,15 @@ function Board() {
                     Change Turn
                 </button>
 
-                <button className="control saved-board"  onClick={handleSaveBoard}>
-                    Save Game
+                <button  className="control save-board"  onClick={handleSaveBoard}>
+                    Save Board
                 </button>
 
-                <button className="control change-board" 
+                {/* <button className="control change-board" 
                 title="The board can only be changed if no moves have been made. Only one change allowed." 
                 onClick={handleChangeBoard}>
                     Change Board
-                </button>
+                </button> */}
             </div>
         </>
     )

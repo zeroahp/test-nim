@@ -14,7 +14,7 @@ function TwoPlayer(){
     
     const userName1 = useSelector((state) => state.NimGame.player1);
     const userName2 = useSelector((state) => state.NimGame.player2);
-    // const playerRandom = useSelector((state) => state.NimGame.turn);
+    const version = useSelector((state) => state.NimGame.version);
     const currentPlayer = useSelector((state) => state.NimGame.currentplayer);
     const navigate = useNavigate();
     console.log("currentPlayer 2", currentPlayer);
@@ -63,6 +63,9 @@ function TwoPlayer(){
                             Exit
                         </p>
                         
+                    </div>
+                    <div className="version-game">
+                        {version}
                     </div>
                     <div class="dropdown">
                         <button class="dropbtn">

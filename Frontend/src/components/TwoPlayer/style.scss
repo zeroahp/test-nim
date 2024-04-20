@@ -15,8 +15,17 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 0;
+            margin-top: 30px;
             width: 100%;
             font-size: 1rem;
+
+            .version-game{
+                color: white;
+                border-top: 1px solid white;
+                border-bottom: 1px solid white;
+                padding: 5px 0;
+                border-radius: 5px;
+            }
 
             .one{
                 margin: 0;
@@ -98,18 +107,18 @@
                       }
                 }
               }
-        }
-          
-          
+        }          
         // ---
 
         .row{
             width: 100%;
             height: auto;
-            display: flex;
-            align-items: center;
+            // display: flex;
+            // align-items: center;
             &.two{
                 margin-top: 150px;
+            display: flex;
+            flex-direction: row;
                 .user{
                     display: flex;
                     flex-direction: column;

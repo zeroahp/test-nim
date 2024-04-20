@@ -1,8 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom'
 import "./style.scss"
-import { setVersion } from '../../redux/nimSlice';
+import { setVersion, setSavedBoard } from '../../redux/nimSlice';
 import { useDispatch } from 'react-redux';
+import gameService from "../../service/client/game.service";
 
 function Home(){
 
@@ -13,8 +14,10 @@ function Home(){
         const gameVersion = version.classList.value;
         console.log("gameVersion", gameVersion);
         
-        await dispatch(setVersion(gameVersion))
+        await dispatch(setVersion(gameVersion));
+        await dispatch(setSavedBoard(null));
     }
+    console.log(gameService.getIdBoard());
 
     return ( 
         <>
@@ -27,17 +30,15 @@ function Home(){
                     </div>
                     <div className="row">
                         <div className="home__box">
-                            {/* <div className="box two_player">
-                                <Link className='twoPlayer' onClick={handleGameMode} to={`/info-user`}>Two Player</Link>
-                            </div>
-                            <div className="box play_vs_bot">
-                                <Link className='playwithBot' onClick={handleGameMode} to={`/info-user`}>Play vs Bot</Link>
-                            </div> */}
                             <div className="box normal-game">
                                 <Link className='normal-game' onClick={handleVersion} to={`/game-mode`}>Normal Game</Link>
                             </div>
                             <div className="box misere-game">
                                 <Link className='misere-game' onClick={handleVersion} to={`/game-mode`}>Misère game</Link>
+                            </div>
+                            <div className="box misere-game">
+                                <Link className='saved-game' 
+                                    to={`/saved-game`}>Saved game</Link>
                             </div>
                             <div className="box instruction">
                                 <Link className='instruction' to={`/instruction`}>Instruction</Link>

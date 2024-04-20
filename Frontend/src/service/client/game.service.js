@@ -1,7 +1,7 @@
 import createApiClient from "../api.service";
 
 class GameServiceClient {
-    constructor(baseUrl = "https://test-nim-server.vercel.app/api"){
+    constructor(baseUrl = "http://localhost:3001/"){
         this.api = createApiClient(baseUrl);
     }
 
@@ -9,14 +9,21 @@ class GameServiceClient {
         return (await this.api.post('/board', data));
     }
 
+    async putData( id, data){
+        return (await this.api.put(`/board/${id}`, data));
+    }
+
     async getData(){
         return (await this.api.get('/board')).data;
     }
 
-    
-    // async getAllRanking(option = {}) {
-    //     return (await this.api.get("/ranking", option)).data;
-    // }
+    async getIdBoard(idBoard){
+        return (await this.api.get(`/board/${idBoard}`)).data;
+    }
+
+    async getItemDetail(id) {
+        return (await this.api.get(`/board/detail/${id}`)).data;
+    }
 
     
 }
