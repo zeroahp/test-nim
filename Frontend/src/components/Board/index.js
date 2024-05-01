@@ -295,7 +295,7 @@ function Board() {
         }   
     }
     
-
+    console.log("solveboard123", solveBoard );
     const handleBotRemove = async() => {
         calculateBotRemove();   
     }

@@ -7,9 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import gameService from "../../service/client/game.service";
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import { useNavigate} from 'react-router-dom'
-import { generateRandomNumberOfPileArray, generateRandomStoneArray, randomIdBoard } from "../../utils/generateRandom";
-
-
+import {  randomIdBoard } from "../../utils/generateRandom";
 
 function Board() {
     
@@ -36,8 +34,8 @@ function Board() {
     
     const [stonesRemoved, setStonesRemoved] = useState([]);
     const [botRemoved, SetBotRemoved] = useState();
-    //random-playger
     
+    //random-playger
     useEffect(() => {
         if(randomPlayer ){
             dispatch(setCurrentPlayer(randomPlayer));
@@ -52,7 +50,6 @@ function Board() {
           });
         SetBotRemoved(5);
         setcurrentRow(null);
-
     }, []);
 
     //setCurrentPlayer-turn
@@ -65,14 +62,17 @@ function Board() {
         }
     }, [currentPlayer])
         
+    
     useEffect(() => {
         let sum = 0;
         for(let i = 0; i< initialBoard.length ; i++){
             sum += initialBoard[i];
         }
-        setStonesRemoved(sum)
-    }, [initialBoard]);
+        setStonesRemoved(sum) //test
+    }, []);
 
+    
+    let updatedSolvedBoard = [...updateSolvedBoard, ...solveBoard];
     //[put] data backend
     useEffect(() => {
         if (currentBoard.every(value => value === 0)) {
@@ -84,8 +84,7 @@ function Board() {
                 winner = (currentPlayer === player1 ? player2 : player1) 
             }
 
-            let updatedSolvedBoard = [...updateSolvedBoard, ...solveBoard];
-            console.log("updatedSolvedBoard", updatedSolvedBoard);
+           
             gameService.putData(idBoard,{
                 currentBoard: currentBoard,
                 solvedBoard: updatedSolvedBoard,
@@ -94,13 +93,10 @@ function Board() {
         }       
     }, [solveBoard]);   
 
-    console.log("solboard", solveBoard);
+    
     //Save Game
     const handleSaveBoard = async() => {
         const idBoard = randomIdBoard();
-        let updatedSolvedBoard = [...updateSolvedBoard, ...solveBoard];
-        console.log("updatedSolvedBoard", updatedSolvedBoard);
-
         gameService.putData(idBoard,{
             idBoard: idBoard,
             player1: player1,
@@ -110,7 +106,7 @@ function Board() {
             turn: randomPlayer,
             gameMode: gameMode,
             version: version,
-            solvedBoard: updatedSolvedBoard,
+            // solvedBoard: updatedSolvedBoard,
         })
         console.log((currentPlayer));
 
@@ -126,6 +122,7 @@ function Board() {
 
     //set-auto-changTurn
     useEffect(() => {
+        console.log("------------------co chay vao day");
         let sum = 0;
         for(let i = 0; i< currentBoard.length ; i++){
             sum += currentBoard[i];
@@ -149,7 +146,7 @@ function Board() {
 
     }, [currentRow]);
 
-    //remove-stones
+    //human-remove-stones
     const handleRemove = async(rowIndex, colIndex) => {    
         if(gameMode === 'Two Player'){
             if(currentPlayer === player1 || (currentPlayer === player2)){
@@ -382,11 +379,12 @@ function Board() {
         else if(version === "Misère game"){
             let tmp = [...currentBoard];
             let i, i1 = 0, index = 0;
-
             //truong hop dat biet tinh special_case
             for(i = 0 ; i < tmp.length ; i++){
+                console.log("tmp[i]", tmp[i]);
                 if(tmp[i] === 1){
                     i1++;
+                    console.log("i1", i1);
                 }else if(tmp[i] > 1){
                     index = i;
                 }
@@ -395,7 +393,7 @@ function Board() {
             //special_case
             if(i1 === (currentBoard.length - 1)){
                 let stonesRemove;
-                if(tmp.length % 2){
+                if(tmp.length % 2){///neu so dong soi hien tai la le
                     stonesRemove = ( tmp[index] - 1);
                     tmp[index] =  tmp[index] - stonesRemove;
                 }else{
@@ -417,7 +415,7 @@ function Board() {
 
                 Swal.fire({
                     position: "top-end",
-                    title: `Bot removed "${currentBoard[index]}" piles in row "${[index]}"!`,
+                    title: `Bot removed "${stonesRemove}" piles in row "${[index]}"!`,
                     showConfirmButton: false,
                     timer: 3000
                 });
@@ -541,6 +539,7 @@ function Board() {
         return {rowIndex, stonesRemoved};
     }
 
+
     //set-changTurn
     const handleChangeTurn = async(e) => {  
         if(currentRow !== null){
@@ -548,9 +547,9 @@ function Board() {
             for(let i = 0; i< currentBoard.length ; i++){
                 sum += currentBoard[i];
             }
-            console.log("curent ----", currentBoard.length);
-            console.log("sum ----", sum);
-
+            console.log("sum", sum);
+            console.log("stonesRemoved", stonesRemoved);
+        
             if((currentBoard[currentRow] - 1) === 0){
                 sum -=1 ;
             }
@@ -575,20 +574,6 @@ function Board() {
     const BotChangeTurn = async() => {
         setcurrentPlayer(currentPlayer === player1 ? player2 : player1);     
     }
-
-    //Change-Board
-//     const hasRunRef = useRef(false); // Create a ref with initial value false
-//   const handleChangeBoard = async () => {
-//     if (!hasRunRef.current) { // Check if the function has already run
-//       const randomBoard = generateRandomStoneArray(generateRandomNumberOfPileArray(4), 10);
-//       await dispatch(setCurrentBoard(randomBoard));
-//     //   await dispatch(setInitial(randomBoard));
-//       setSolveBoard([]);
-//       hasRunRef.current = true; // Set the flag to true after running
-//     }
-//   };
-
-   
 
     
     return (
