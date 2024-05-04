@@ -17,9 +17,7 @@ function History() {
     }
 
 
-    const handleDetail = async(e) => {
-        // console.log("log e", index);
-        
+    const handleDetail = async(e) => {        
         const tdValues = Array.from(e.currentTarget.querySelectorAll('td')).map(td => td.innerText);
 
         const getIteam = await gameService.getItemDetail(tdValues[0])
@@ -89,7 +87,6 @@ function History() {
         fetchData();
     }, []);
 
-    console.log(getData); 
 
     return (
         <>

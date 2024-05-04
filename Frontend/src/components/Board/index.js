@@ -1,7 +1,7 @@
 import "./style.scss"
 import { calculateNimSum } from "../../utils/caculator";
 import { useSelector } from "react-redux";
-import {setCurrentBoard, setWinner, setCurrentPlayer, setInitial} from '../../redux/nimSlice'
+import {setCurrentBoard, setCurrentPlayer, setInitial} from '../../redux/nimSlice'
 import { useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import gameService from "../../service/client/game.service";
@@ -31,6 +31,7 @@ function Board() {
     
     const [stonesRemoved, setStonesRemoved] = useState([]);
     const [botRemoved, SetBotRemoved] = useState();
+    const [winner, setWinner] = useState("player");
     
 
     //random-playger
@@ -74,14 +75,6 @@ function Board() {
     //[post] data backend
     useEffect(() => {
         if (currentBoard.every(value => value === 0)) {
-            let winner = '';
-                                    
-            if(version === "Normal Game"){
-                winner = currentPlayer;
-            }else{
-                winner = (currentPlayer === player1 ? player2 : player1) 
-            }
-
             gameService.postData({
                 player1: player1,
                 player2: player2,
@@ -102,30 +95,37 @@ function Board() {
 
     //Save Game
     const handleSaveBoard = async() => {
+        
         const idBoard = randomIdBoard();
-        console.log(idBoard);
-        gameService.postData({
-            idBoard: idBoard,
-            player1: player1,
-            player2: player2,
-            initialBoard:initialBoard,
-            currentBoard: currentBoard,
-            currentPlayer: currentPlayer,
-            turn: randomPlayer,
-            gameMode: gameMode,
-            version: version,
-            solvedBoard: solveBoard,
-        })
-
         Swal.fire({
             title: "Save game?",
             text: `ID Board "${idBoard}"!`,
             icon: "question",
-            textColor: "#000000",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             confirmButtonText: "Yes!",
-          })
+            cancelButtonColor: "#d33",
+            cancelButtonText: "No!"
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                return;
+            }else{
+                
+                navigate("/home")
+                gameService.postData({
+                    idBoard: idBoard,
+                    player1: player1,
+                    player2: player2,
+                    initialBoard:initialBoard,
+                    currentBoard: currentBoard,
+                    currentPlayer: currentPlayer,
+                    turn: randomPlayer,
+                    gameMode: gameMode,
+                    version: version,
+                    solvedBoard: solveBoard,
+                })
+            }
+        });
     }
 
     //set-auto-changTurn
@@ -198,7 +198,7 @@ function Board() {
                             }
                             
                             Swal.fire({
-                                title: `Congratulation "${winner}"!`,
+                                title: `Congratulation "${winner} human"!`,
                                 imageUrl: require("../../asset/gif/4b8.gif"),
                                 imageWidth: 350,
                                 imageHeight: 250,
@@ -217,7 +217,7 @@ function Board() {
                                 }
                               });
     
-                            await dispatch(setWinner(currentPlayer));                      
+                            await setWinner(winner);                      
     
                         }
                 }
@@ -266,7 +266,7 @@ function Board() {
                             }else{
                                 winner = (currentPlayer === player1 ? player2 : player1) 
                             }
-                            
+
                             Swal.fire({
                                 title: `Congratulation "${winner}"!`,
                                 imageUrl: require("../../asset/gif/4b8.gif"),
@@ -287,7 +287,7 @@ function Board() {
                                 }
                               });
     
-                            await dispatch(setWinner(currentPlayer));                      
+                            await setWinner(winner);                      
     
                         }
                 }
@@ -295,7 +295,6 @@ function Board() {
         }   
     }
     
-    console.log("solveboard123", solveBoard );
     const handleBotRemove = async() => {
         calculateBotRemove();   
     }
@@ -351,7 +350,7 @@ function Board() {
                                 }
     
                                 Swal.fire({
-                                    title: `Congratulation "${currentPlayer}"!`,
+                                    title: `Congratulation "${winner}"!`,
                                     imageUrl: require("../../asset/gif/4b8.gif"),
                                     imageWidth: 350,
                                     imageHeight: 250,
@@ -370,7 +369,7 @@ function Board() {
                                     }
                                   });
     
-                                await dispatch(setWinner(winner));
+                                await setWinner(winner);
         
                             }   
                         }
@@ -423,7 +422,7 @@ function Board() {
 
                 Swal.fire({
                     position: "top-end",
-                    title: `Bot removed "${currentBoard[index]}" piles in row "${[index]}"!`,
+                    title: `Bot removed "${stonesRemoved}" piles in row "${[index]}"!`,
                     showConfirmButton: false,
                     timer: 3000
                 });
@@ -478,7 +477,7 @@ function Board() {
                                     }
         
                                     Swal.fire({
-                                        title: `Congratulation "${currentPlayer}"!`,
+                                        title: `Congratulation "${winner}"!`,
                                         imageUrl: require("../../asset/gif/4b8.gif"),
                                         imageWidth: 350,
                                         imageHeight: 250,
@@ -497,7 +496,7 @@ function Board() {
                                         }
                                       });
         
-                                    await dispatch(setWinner(winner));
+                                    await setWinner(winner);
             
                                 }   
                             }
@@ -535,7 +534,7 @@ function Board() {
         await SetBotRemoved(stonesRemoved);
 
         setSolveBoard((prevSolveBoard) => [...prevSolveBoard, { 
-            playerTurn : currentPlayer,
+            player : currentPlayer,
             stonesRemoved: stonesRemoved,
             rowIndex: rowIndex,
          }]);
@@ -556,7 +555,6 @@ function Board() {
             for(let i = 0; i< currentBoard.length ; i++){
                 sum += currentBoard[i];
             }
-            console.log("sum ----", sum);
 
             if((currentBoard[currentRow] - 1) === 0){
                 sum -=1 ;
@@ -593,6 +591,9 @@ function Board() {
       hasRunRef.current = true; // Set the flag to true after running
     }
   };
+
+    console.log("current", currentBoard);
+    console.log("solveBoard", solveBoard);
     
     return (
         <>

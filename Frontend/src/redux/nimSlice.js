@@ -14,7 +14,8 @@ const nimSlice = createSlice ({
         gameMode: null,
         winner : null,
         autoSolve: false,
-        savedBoard: null,
+        savedIdBoard: null,
+        idBoard:null,
     },
 
     reducers: {
@@ -29,8 +30,11 @@ const nimSlice = createSlice ({
         setCurrentBoard: (state, action) => {
             state.currentBoard = action.payload;
         },
-        setSavedBoard : (state, action) => {
-            state.savedBoard = action.payload;
+        setSavedIdBoard : (state, action) => {
+            state.savedIdBoard = action.payload;
+        },
+        setIdBoard : (state, action) => {
+            state.idBoard = action.payload;
         },
         setSolvedBoard: (state, action) => {
             state.solvedBoard = action.payload;
@@ -91,7 +95,8 @@ const nimSlice = createSlice ({
                 gameMode: null,
                 winner : null,
                 autoSolve: false,
-                savedBoard: null,
+                savedIdBoard: null,
+                idBoard:null,
             }
         }
     }
@@ -110,7 +115,8 @@ export const {
     setCurrentPlayer,
     setInitial,
     resetNim,
-    setSavedBoard
+    setSavedIdBoard,
+    setIdBoard
 } = nimSlice.actions;
 
 export const getInitialState = (state) => state.NimGame.initialState;

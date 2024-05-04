@@ -1,15 +1,14 @@
 import "./style.scss"
 import { calculateNimSum } from "../../utils/caculator";
 import { useSelector } from "react-redux";
-import {setCurrentBoard, setWinner, setCurrentPlayer, setSavedBoard} from '../../redux/nimSlice'
+import {setCurrentBoard, setCurrentPlayer} from '../../redux/nimSlice'
 import { useDispatch } from "react-redux";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import gameService from "../../service/client/game.service";
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import { useNavigate} from 'react-router-dom'
-import {  randomIdBoard } from "../../utils/generateRandom";
 
-function Board() {
+function SaveBoard() {
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -24,8 +23,8 @@ function Board() {
     const initialBoard = useSelector((state) => state.NimGame.currentBoard);    
     const solved = useSelector((state) => state.NimGame.solvedBoard);    
     const updateSolvedBoard = solved;
-    const idBoard = useSelector((state) => state.NimGame.savedBoard);    
-    console.log("updateSolvedBoard", updateSolvedBoard);
+    const _id = useSelector((state) => state.NimGame.savedIdBoard);    
+    const idBoard = useSelector((state) => state.NimGame.idBoard);    
 
     //usestate
     const [currentPlayer, setcurrentPlayer] = useState(randomPlayer);
@@ -34,6 +33,9 @@ function Board() {
     
     const [stonesRemoved, setStonesRemoved] = useState([]);
     const [botRemoved, SetBotRemoved] = useState();
+    const [winner, setWinner] = useState("player");
+
+    console.log(initialBoard, "466");
     
     //random-playger
     useEffect(() => {
@@ -71,44 +73,16 @@ function Board() {
         setStonesRemoved(sum) //test
     }, []);
 
-    
+    //save solveBoard
     let updatedSolvedBoard = [...updateSolvedBoard, ...solveBoard];
-    //[put] data backend
-    useEffect(() => {
-        if (currentBoard.every(value => value === 0)) {
-            let winner = '';
-                                    
-            if(version === "Normal Game"){
-                winner = currentPlayer;
-            }else{
-                winner = (currentPlayer === player1 ? player2 : player1) 
-            }
 
-           
-            gameService.putData(idBoard,{
-                currentBoard: currentBoard,
-                solvedBoard: updatedSolvedBoard,
-                winner: winner,
-            })
-        }       
-    }, [solveBoard]);   
-
-    
     //Save Game
     const handleSaveBoard = async() => {
-        const idBoard = randomIdBoard();
-        gameService.putData(idBoard,{
-            idBoard: idBoard,
-            player1: player1,
-            player2: player2,
+        gameService.putData(_id,{
             currentBoard: currentBoard,
             currentPlayer: currentPlayer,
-            turn: randomPlayer,
-            gameMode: gameMode,
-            version: version,
-            // solvedBoard: updatedSolvedBoard,
+            solvedBoard: updatedSolvedBoard,
         })
-        console.log((currentPlayer));
 
         Swal.fire({
             title: "Save game?",
@@ -117,12 +91,29 @@ function Board() {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             confirmButtonText: "Yes!",
-          })
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                return;
+            }else{
+                navigate("/home")
+            }
+        });
     }
+
+    //[put] data backend
+    useEffect(() => {
+        if (currentBoard.every(value => value === 0)) {
+           
+            gameService.putData(_id,{
+                currentBoard: currentBoard,
+                solvedBoard: updatedSolvedBoard,
+                winner: winner,
+            })
+        }       
+    }, [solveBoard]); 
 
     //set-auto-changTurn
     useEffect(() => {
-        console.log("------------------co chay vao day");
         let sum = 0;
         for(let i = 0; i< currentBoard.length ; i++){
             sum += currentBoard[i];
@@ -210,7 +201,7 @@ function Board() {
                                 }
                               });
     
-                            await dispatch(setWinner(currentPlayer));                      
+                            await setWinner(winner);                      
     
                         }
                 }
@@ -279,7 +270,7 @@ function Board() {
                                 }
                               });
     
-                            await dispatch(setWinner(currentPlayer));                      
+                              await setWinner(winner);                       
     
                         }
                 }
@@ -342,7 +333,7 @@ function Board() {
                                 }
     
                                 Swal.fire({
-                                    title: `Congratulation "${currentPlayer}"!`,
+                                    title: `Congratulation "${winner}"!`,
                                     imageUrl: require("../../asset/gif/4b8.gif"),
                                     imageWidth: 350,
                                     imageHeight: 250,
@@ -361,7 +352,7 @@ function Board() {
                                     }
                                   });
     
-                                await dispatch(setWinner(winner));
+                                  await setWinner(winner);   
         
                             }   
                         }
@@ -381,10 +372,8 @@ function Board() {
             let i, i1 = 0, index = 0;
             //truong hop dat biet tinh special_case
             for(i = 0 ; i < tmp.length ; i++){
-                console.log("tmp[i]", tmp[i]);
                 if(tmp[i] === 1){
                     i1++;
-                    console.log("i1", i1);
                 }else if(tmp[i] > 1){
                     index = i;
                 }
@@ -470,7 +459,7 @@ function Board() {
                                     }
         
                                     Swal.fire({
-                                        title: `Congratulation "${currentPlayer}"!`,
+                                        title: `Congratulation "${winner}"!`,
                                         imageUrl: require("../../asset/gif/4b8.gif"),
                                         imageWidth: 350,
                                         imageHeight: 250,
@@ -489,7 +478,7 @@ function Board() {
                                         }
                                       });
         
-                                    await dispatch(setWinner(winner));
+                                      await setWinner(winner);   
             
                                 }   
                             }
@@ -547,9 +536,7 @@ function Board() {
             for(let i = 0; i< currentBoard.length ; i++){
                 sum += currentBoard[i];
             }
-            console.log("sum", sum);
-            console.log("stonesRemoved", stonesRemoved);
-        
+
             if((currentBoard[currentRow] - 1) === 0){
                 sum -=1 ;
             }
@@ -620,15 +607,9 @@ function Board() {
                 <button  className="control save-board"  onClick={handleSaveBoard}>
                     Save Board
                 </button>
-
-                {/* <button className="control change-board" 
-                title="The board can only be changed if no moves have been made. Only one change allowed." 
-                onClick={handleChangeBoard}>
-                    Change Board
-                </button> */}
             </div>
         </>
     )
 }
 
-export default Board;
+export default SaveBoard;

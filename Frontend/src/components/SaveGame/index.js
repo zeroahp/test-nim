@@ -1,9 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useLocation, useNavigate, Navigate} from 'react-router-dom'
+import { useNavigate} from 'react-router-dom'
 import "./style.scss"
 import { useDispatch,  } from 'react-redux';
-import { setCurrentBoard,setPlayer2, setPlayer1, setTurn, setInitial, setVersion, setGameMode, setSavedBoard, setSolvedBoard } from '../../redux/nimSlice';
-import { useSelector } from 'react-redux';
+import { setCurrentBoard,setPlayer2, setPlayer1, setTurn, setInitial,setIdBoard, setVersion, setGameMode, setSavedIdBoard, setSolvedBoard } from '../../redux/nimSlice';
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import { useEffect } from "react";
 import gameService from "../../service/client/game.service";
@@ -20,7 +19,6 @@ function SaveGame(){
         e.preventDefault();      
         const idBoard = document.querySelector('.id__box .fill-id .input');   
         const data = await gameService.getIdBoard(idBoard.value);
-        console.log( "data", data);
 
         if(idBoard.value === ""  ){
             Swal.fire({
@@ -40,7 +38,8 @@ function SaveGame(){
             dispatch(setTurn(data.currentPlayer));
             dispatch(setCurrentBoard(data.currentBoard));
             dispatch(setSolvedBoard(data.solvedBoard))
-            dispatch(setSavedBoard(data._id));
+            dispatch(setSavedIdBoard(data._id));
+            dispatch(setIdBoard(data.idBoard));
 
             if( data.version === "Normal Game"){
                 dispatch(setVersion("normal-game"));
@@ -69,13 +68,6 @@ function SaveGame(){
             });
             return;
         }
-            // dispatch(setPlayer1(playerOneName.value));
-            // dispatch(setPlayer2(playerTwoName.value));
-
-            // const randomTurn =  await randomString(playerOneName.value, playerTwoName.value);
-
-            // await dispatch(setTurn(randomTurn));
-            // navigate('/two-player');
     }
 
     useEffect(() => {

@@ -9,19 +9,16 @@ import { Link,useNavigate } from "react-router-dom"
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import gameService from "../../service/client/game.service";
 
 function TwoPlayer(){
     
     const userName1 = useSelector((state) => state.NimGame.player1);
     const userName2 = useSelector((state) => state.NimGame.player2);
-    const savedBoard = useSelector((state) => state.NimGame.savedBoard);
+    const savedBoard = useSelector((state) => state.NimGame.savedIdBoard);
+    console.log("saveboar", savedBoard);
     const currentPlayer = useSelector((state) => state.NimGame.currentplayer);
     const version = useSelector((state) => state.NimGame.version);
-
-    console.log(savedBoard);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const activeOne = document.querySelector(".col-2 .user1");

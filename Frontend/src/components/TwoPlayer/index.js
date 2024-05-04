@@ -2,7 +2,7 @@ import Board from "../Board/index"
 import "./style.scss"
 import user1 from "../../asset/images/1.png"
 import user2 from "../../asset/images/2.png"
-// import computer from "../../asset/images/3.png"
+import SavedBoard from "../SaveBoard/index"
 import {  useSelector } from "react-redux"
 import { useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom"
@@ -17,7 +17,8 @@ function TwoPlayer(){
     const version = useSelector((state) => state.NimGame.version);
     const currentPlayer = useSelector((state) => state.NimGame.currentplayer);
     const navigate = useNavigate();
-    console.log("currentPlayer 2", currentPlayer);
+    const savedBoard = useSelector((state) => state.NimGame.savedIdBoard);
+
 
     useEffect(() => {
         const activeOne = document.querySelector(".col-2 .user1");
@@ -87,9 +88,17 @@ function TwoPlayer(){
                         </div>
                     </div>
 
+                    {savedBoard ? 
+                    (
                     <div className="col-8">
-                        <Board />
+                        <SavedBoard />
                     </div>
+                    )
+                    :
+                    (<div className="col-8">
+                        <Board />
+                    </div>)
+                    }
 
                     <div className="col-2 user">
                         <img src={user2} alt="User 2"/>

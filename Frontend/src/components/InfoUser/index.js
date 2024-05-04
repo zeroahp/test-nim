@@ -1,16 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useLocation, useNavigate, Navigate} from 'react-router-dom'
+import { useNavigate} from 'react-router-dom'
 import "./style.scss"
 import { useDispatch,  } from 'react-redux';
 import {setCurrentBoard} from '../../redux/nimSlice'
-import { setPlayer2, setPlayer1, setTurn, setBot, setInitial } from '../../redux/nimSlice';
+import { setPlayer2, setPlayer1, setTurn, setInitial } from '../../redux/nimSlice';
 import { useSelector } from 'react-redux';
 import { randomString } from "../../utils/generateRandom";
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import { generateRandomNumberOfPileArray, generateRandomStoneArray } from "../../utils/generateRandom";
 import { useEffect } from "react";
-
-
 
 function InfoUser(){
 
@@ -72,8 +70,6 @@ function InfoUser(){
 
             await dispatch(setTurn(playerThreeName.value));
             navigate('/playvsbot');
-            // return <Navigate to="/playvsbot" state={{ from: '/info-user' }} replace />
-
         }
     }
 

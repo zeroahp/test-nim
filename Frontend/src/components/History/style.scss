@@ -45,6 +45,7 @@ p{
             top: 80px;
             max-height: 650px;
             overflow: auto;
+            margin-bottom: 20px;
             
         }
         .table-wrapper-scroll-y {
@@ -65,7 +66,6 @@ p{
             border-bottom: 1.5px solid white;
             border-radius: 10px;            
             text-align: center;
-            margin-top: 20px;
 
             &:hover{
                 background: #efeded26;

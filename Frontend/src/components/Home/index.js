@@ -1,9 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom'
 import "./style.scss"
-import { setVersion, setSavedBoard } from '../../redux/nimSlice';
+import { setVersion, setSavedIdBoard } from '../../redux/nimSlice';
 import { useDispatch } from 'react-redux';
-import gameService from "../../service/client/game.service";
 
 function Home(){
 
@@ -12,12 +11,10 @@ function Home(){
     const handleVersion= async(e) => {
         const version = e.target;
         const gameVersion = version.classList.value;
-        console.log("gameVersion", gameVersion);
         
         await dispatch(setVersion(gameVersion));
-        await dispatch(setSavedBoard(null));
+        await dispatch(setSavedIdBoard(null));
     }
-    console.log(gameService.getIdBoard());
 
     return ( 
         <>
